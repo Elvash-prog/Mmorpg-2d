@@ -1,6 +1,8 @@
 extends Node2D
 ## Authoritative co-op RPG prototype. The server owns every gameplay outcome.
 const Data = preload("res://scripts/game_data.gd")
+const Realm = preload("res://scripts/realm_data.gd")
+const Expansion = preload("res://scripts/realm_system.gd")
 const Map = preload("res://scripts/map_rules.gd")
 const HERO_SHEET = preload("res://assets/guardian.png")
 const MAP_TEXTURE = preload("res://assets/village.png")
@@ -15,6 +17,12 @@ var animations: Dictionary = {}
 var projectiles: Array[Dictionary] = []
 var zones: Array[Dictionary] = []
 var effects: Array[Dictionary] = []
+var camera := Camera2D.new()
+var render_players: Dictionary = {}
+var render_enemies: Dictionary = {}
+var render_projectiles: Dictionary = {}
+var projectile_serial := 0
+var camera_initialized := false
 var grid := AStarGrid2D.new()
 var clock := 0.0
 var send_elapsed := 0.0
@@ -35,9 +43,15 @@ var smoke_elapsed := 0.0
 var smoke_attack_received := false
 var smoke_special_received := false
 var smoke_special_sent := false
+var smoke_equip_received := false
+var smoke_portal_received := false
+var smoke_portal_sent := false
+var smoke_special_confirmed := false
 
 func _ready() -> void:
 	_build_grid()
+	add_child(camera)
+	camera.position = Vector2(576,360)
 	visuals = preload("res://scripts/combat_view.gd").new()
 	visuals.world = self
 	add_child(visuals)
@@ -58,17 +72,21 @@ func _ready() -> void:
 	_update_labels()
 
 func _build_grid() -> void:
-	grid.region = Rect2i(0, 0, 72, 40)
+	grid.region = Rect2i(0, 0, 216, 159)
 	grid.cell_size = Vector2(16, 16)
 	grid.offset = Vector2(8, 8)
 	grid.diagonal_mode = AStarGrid2D.DIAGONAL_MODE_ONLY_IF_NO_OBSTACLES
 	grid.update()
-	for y in range(40):
-		for x in range(72):
+	for y in range(159):
+		for x in range(216):
 			grid.set_point_solid(Vector2i(x, y), Map.blocked(Vector2(x * 16 + 8, y * 16 + 8)))
 
 func _reset_world() -> void:
 	animations.clear()
+	render_players.clear()
+	render_enemies.clear()
+	render_projectiles.clear()
+	camera_initialized = false
 	players.clear()
 	commands.clear()
 	projectiles.clear()
@@ -80,14 +98,21 @@ func _reset_world() -> void:
 	var homes := [Vector2(620, 235), Vector2(760, 245), Vector2(640, 415), Vector2(820, 365), Vector2(925, 435), Vector2(850, 535)]
 	for i in range(homes.size()):
 		var kind := 0 if i < 3 else (1 if i < 5 else 2)
-		var def: Dictionary = Data.ENEMIES[kind]
-		monsters.append({"pos":homes[i], "home":homes[i], "kind":kind, "hp":def.hp, "max_hp":def.hp, "timer":0.0, "cooldown":0.0, "windup":0.0, "attack_pos":homes[i], "slow":0.0, "root":0.0, "hit":0.0, "moving":false, "path":[], "path_timer":0.0})
+		monsters.append(_new_monster(homes[i], kind))
+	Expansion.add_enemies(self)
+
+func _new_monster(pos: Vector2, kind: int) -> Dictionary:
+	var def: Dictionary = Data.ENEMIES[kind]
+	return {"id":monsters.size(), "pos":pos, "home":pos, "kind":kind, "hp":def.hp, "max_hp":def.hp, "timer":0.0, "cooldown":0.0, "windup":0.0, "attack_pos":pos, "slow":0.0, "root":0.0, "hit":0.0, "moving":false, "path":[], "path_timer":0.0,
+		"velocity":Vector2.ZERO, "facing":Vector2.RIGHT, "stride":0.0, "patrol_timer":0.0, "patrol_pos":pos, "phase":1, "pattern":0, "contributors":{}}
 
 func _new_player(class_id := 0) -> Dictionary:
-	return {"pos":SPAWN, "hp":Data.CLASS_HP[class_id], "max_hp":Data.CLASS_HP[class_id], "mana":Data.CLASS_MANA[class_id], "max_mana":Data.CLASS_MANA[class_id], "class_id":class_id,
+	var p := {"pos":SPAWN, "hp":Data.CLASS_HP[class_id], "max_hp":Data.CLASS_HP[class_id], "mana":Data.CLASS_MANA[class_id], "max_mana":Data.CLASS_MANA[class_id], "class_id":class_id,
 		"xp":0, "gold":0, "kills":0, "cds":[0.0,0.0,0.0,0.0,0.0], "respawn":0.0, "swing":0.0, "last_skill":0, "cast":{}, "request":-1, "request_target":-1, "target":-1, "facing":Vector2.RIGHT,
 		"shield":0.0, "shield_time":0.0, "evade":0.0, "combat":0.0, "progress":{"slime":0,"wolf":0,"golem":0,"herbs":0,"visit":0}, "picked":[], "claimed":[],
-		"message":"Cinco missões recebidas. Fale com Lia usando F.", "message_time":0.0}
+		"message":"A fonte está enfraquecendo. Fale com Lia [F] e prepare-se para partir.", "message_time":0.0}
+	Expansion.initialize_player(p)
+	return p
 
 func _process(delta: float) -> void:
 	var direction := _keyboard_direction() + touch_direction
@@ -96,8 +121,8 @@ func _process(delta: float) -> void:
 		direction = Vector2.ZERO
 		attack = false
 	if smoke_client:
-		direction = Vector2.RIGHT
-		attack = true
+		direction = Vector2.ZERO if smoke_portal_sent else Vector2.RIGHT
+		attack = not smoke_special_sent
 	if _is_authority():
 		commands[1] = {"direction":direction.limit_length(), "attack":attack, "target":desired_target, "received":clock}
 		_simulate(delta)
@@ -111,6 +136,7 @@ func _process(delta: float) -> void:
 	if multiplayer.has_multiplayer_peer() and multiplayer.is_server() and send_elapsed >= 0.05:
 		send_elapsed = 0.0
 		_receive_state.rpc(var_to_bytes([players, monsters, projectiles, zones, effects]).compress(FileAccess.COMPRESSION_DEFLATE))
+	_update_presentation(delta)
 	_update_animation(delta)
 	_update_labels()
 	visuals.queue_redraw()
@@ -130,6 +156,8 @@ func _unhandled_key_input(event: InputEvent) -> void:
 			interact()
 		elif event.physical_keycode == KEY_J:
 			hud.toggle_journal()
+		elif event.physical_keycode == KEY_C:
+			hud.toggle_character()
 
 func _unhandled_input(event: InputEvent) -> void:
 	if hud.modal_open():
@@ -144,7 +172,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	var closest := 40.0
 	desired_target = -1
 	for i in range(monsters.size()):
-		var d: float = point.distance_to(monsters[i].pos - Vector2(0, 12))
+		var d: float = point.distance_to(enemy_display_pos(i) - Vector2(0, 12))
 		if monsters[i].hp > 0 and d < closest:
 			closest = d
 			desired_target = i
@@ -215,6 +243,7 @@ func _simulate(delta: float) -> void:
 				p.hp = p.max_hp
 				p.mana = p.max_mana
 				p.pos = SPAWN
+				p.velocity = Vector2.ZERO
 				p.shield = 0.0
 				_message(p, "Você retornou à fonte. Seu progresso foi mantido.")
 			continue
@@ -223,7 +252,8 @@ func _simulate(delta: float) -> void:
 		if clock - cmd.get("received", clock) > 0.35:
 			direction = Vector2.ZERO
 			cmd = {"direction":Vector2.ZERO, "attack":false}
-		p.pos = Map.move_actor(p.pos, direction.limit_length() * SPEED * delta)
+		p.velocity = p.velocity.move_toward(direction.limit_length() * p.speed, delta * (950 if direction.length() > 0 else 1300))
+		p.pos = Map.move_actor(p.pos, p.velocity * delta)
 		if direction.length() > 0.1:
 			p.facing = direction.normalized()
 		if cmd.has("target"):
@@ -338,7 +368,8 @@ func _resolve_skill(id: int, cast: Dictionary) -> void:
 func _spawn_projectile(owner: int, destination: Vector2, skill: Dictionary, delay := 0.0) -> void:
 	var origin: Vector2 = players[owner].pos
 	var speed := 550.0 if skill.kind in ["arrow", "double"] else 390.0
-	projectiles.append({"pos":origin, "origin":origin, "velocity":origin.direction_to(destination) * speed, "life":skill.range / speed + 0.06, "delay":delay, "owner":owner, "power":skill.power, "kind":skill.kind})
+	projectile_serial += 1
+	projectiles.append({"id":projectile_serial, "pos":origin, "origin":origin, "velocity":origin.direction_to(destination) * speed, "life":skill.range / speed + 0.06, "delay":delay, "owner":owner, "power":skill.power, "kind":skill.kind})
 	_fx("cast", origin, destination, 30, Data.CLASS_COLORS[players[owner].class_id])
 
 func _tick_projectiles(delta: float) -> void:
@@ -379,6 +410,9 @@ func _tick_zones(delta: float) -> void:
 	for zone in zones:
 		zone.life -= delta
 		zone.tick -= delta
+		if zone.get("hostile", false):
+			Expansion.tick_hazard(self, zone, delta)
+			continue
 		if not players.has(zone.owner):
 			zone.life = 0
 			continue
@@ -405,25 +439,43 @@ func _damage_monster(owner: int, target: int, amount: float, status := "") -> vo
 	if not players.has(owner) or players[owner].hp <= 0 or monsters[target].hp <= 0:
 		return
 	var monster: Dictionary = monsters[target]
+	amount += players[owner].power
+	if players[owner].crit > 0 and randf() < players[owner].crit:
+		amount *= 1.5
+	if Expansion.boss_shield(self, monster):
+		amount *= 0.2
+	monster.contributors[owner] = clock
 	monster.hp = maxf(0, monster.hp - amount)
 	monster.hit = 0.2
 	if status == "slow":
 		monster.slow = 3.0
 	elif status == "root":
-		monster.root = 2.0
+		monster.root = 0.3 if monster.kind >= 3 else 2.0
 	players[owner].combat = 4.0
 	_number(monster.pos, str(int(amount)), Color("fff0af"))
 	if monster.hp <= 0:
-		monster.timer = 8.0
+		monster.timer = 60.0 if monster.kind >= 3 else 8.0
 		monster.windup = 0.0
-		var p: Dictionary = players[owner]
-		var def: Dictionary = Data.ENEMIES[monster.kind]
-		p.xp += def.xp
-		p.gold += 2
-		p.kills += 1
-		p.progress[def.key] += 1
-		_message(p, "%s derrotado! +%s XP, +2 ouro." % [def.name, def.xp])
-		_fx("defeat", monster.pos, monster.pos, 30, Color("e9d48e"))
+		for minion in monsters:
+			if minion.get("summoner",-1) == monster.id:
+				minion.hp = 0
+		for zone in zones:
+			if zone.get("source", -1) == monster.id:
+				zone.life = 0
+		for contributor in monster.contributors:
+			if not players.has(contributor) or clock - monster.contributors[contributor] > 15:
+				continue
+			var p: Dictionary = players[contributor]
+			if p.hp <= 0 or p.pos.distance_to(monster.pos) > 650:
+				continue
+			var def: Dictionary = Data.ENEMIES[monster.kind]
+			p.xp += def.xp
+			p.gold += 2
+			p.kills += 1
+			p.progress[def.key] += 1
+			_message(p, "%s derrotado! +%s XP, +2 ouro." % [def.name, def.xp])
+			Expansion.on_kill(self, p, monster)
+		_fx("defeat", monster.pos, monster.pos, 45 if monster.kind >= 3 else 30, Color("e9d48e"))
 
 func _hurt_player(id: int, damage: float) -> void:
 	var p: Dictionary = players[id]
@@ -432,6 +484,7 @@ func _hurt_player(id: int, damage: float) -> void:
 	if p.evade > 0:
 		_number(p.pos, "ESQUIVA", Color("9ce9c0"))
 		return
+	damage = maxf(1, damage - p.armor * 0.6)
 	var absorbed := minf(p.shield, damage)
 	p.shield -= absorbed
 	damage -= absorbed
@@ -444,14 +497,28 @@ func _hurt_player(id: int, damage: float) -> void:
 		p.shield = 0.0
 
 func _tick_monster(monster: Dictionary, delta: float) -> void:
+	if monster.get("summoned",false):
+		var summoner: Dictionary = monsters[monster.summoner]
+		if summoner.hp <= 0 or summoner.phase != 2:
+			monster.hp = 0
+			return
+		if monster.hp <= 0:
+			return
 	if monster.hp <= 0:
 		monster.timer -= delta
 		if monster.timer <= 0:
 			monster.hp = monster.max_hp
 			monster.pos = monster.home
 			monster.path = []
+			monster.phase = 1
+			monster.pattern = 0
+			monster.contributors = {}
+			monster.velocity = Vector2.ZERO
 			monster.slow = 0.0
 			monster.root = 0.0
+		return
+	if monster.kind >= 3:
+		Expansion.tick_boss(self, monster, delta)
 		return
 	var def: Dictionary = Data.ENEMIES[monster.kind]
 	for timer in ["cooldown", "hit", "slow", "root", "path_timer"]:
@@ -473,20 +540,32 @@ func _tick_monster(monster: Dictionary, delta: float) -> void:
 	for id in players:
 		var p: Dictionary = players[id]
 		var d: float = p.pos.distance_to(monster.pos)
-		if p.hp > 0 and d < distance and p.pos.distance_to(SPAWN) > 85:
+		if p.hp > 0 and d < distance and p.pos.distance_to(SPAWN) > 85 and p.pos.distance_to(monster.home) < 330:
 			target = id
 			distance = d
 	if target >= 0:
 		if distance <= def.reach and monster.cooldown <= 0 and Map.line_clear(monster.pos, players[target].pos):
 			monster.windup = def.windup
 			monster.attack_pos = players[target].pos
-		else:
+		elif distance > def.reach * 0.9:
 			_move_monster(monster, players[target].pos, delta, def.speed)
+		else:
+			monster.velocity = monster.velocity.move_toward(Vector2.ZERO, delta * 450)
 	else:
-		_move_monster(monster, monster.home, delta, def.speed * 0.7)
+		monster.patrol_timer -= delta
+		if monster.pos.distance_to(monster.home) > 240:
+			monster.patrol_pos = monster.home
+		elif monster.patrol_timer <= 0:
+			monster.patrol_timer = 3.0 + fmod(monster.id * 1.7, 3.0)
+			var angle: float = clock * 0.3 + monster.id * 2.4
+			var candidate: Vector2 = monster.home + Vector2.from_angle(angle) * 55
+			monster.patrol_pos = candidate if not Map.blocked(candidate) else monster.home
+		if monster.patrol_timer < 2.5 or monster.pos.distance_to(monster.home) > 240:
+			_move_monster(monster, monster.patrol_pos, delta, def.speed * 0.4)
 
 func _move_monster(monster: Dictionary, destination: Vector2, delta: float, speed: float) -> void:
 	if monster.pos.distance_to(destination) < 6:
+		monster.velocity = monster.velocity.move_toward(Vector2.ZERO,delta*450)
 		return
 	var aim := destination
 	if not Map.line_clear(monster.pos, destination, 11):
@@ -505,13 +584,27 @@ func _move_monster(monster: Dictionary, destination: Vector2, delta: float, spee
 			return
 		aim = monster.path[0]
 	var before: Vector2 = monster.pos
-	monster.pos = Map.move_actor(monster.pos, before.direction_to(aim) * minf(before.distance_to(aim), speed * delta * (0.45 if monster.slow > 0 else 1.0)))
+	var desired: Vector2 = before.direction_to(aim) * speed * (0.45 if monster.slow > 0 else 1.0)
+	var separation := Vector2.ZERO
+	for other in monsters:
+		var gap: float = before.distance_to(other.pos)
+		if other.id != monster.id and other.hp > 0 and gap > 0.1 and gap < 32:
+			separation += other.pos.direction_to(before) * (32-gap)*2
+	desired = (desired+separation).limit_length(speed)
+	monster.velocity = monster.velocity.move_toward(desired, delta * 300)
+	monster.pos = Map.move_actor(monster.pos, monster.velocity.limit_length(minf(speed, before.distance_to(aim) / maxf(delta,0.001))) * delta)
+	var movement: Vector2 = monster.pos - before
+	if movement.length() > 0.05:
+		monster.facing = movement.normalized()
+		monster.stride += movement.length()
 	monster.moving = before.distance_to(monster.pos) > 0.1
 
 func _interact(id: int) -> void:
 	if not players.has(id) or players[id].hp <= 0:
 		return
 	var p: Dictionary = players[id]
+	if Expansion.interact(self, id):
+		return
 	for i in range(Data.HERBS.size()):
 		if not p.picked.has(i) and p.pos.distance_to(Data.HERBS[i]) < 43 and Map.line_clear(p.pos, Data.HERBS[i]):
 			p.picked.append(i)
@@ -519,18 +612,23 @@ func _interact(id: int) -> void:
 			_message(p, "Erva coletada: %s/3. Entregue a Lia quando concluir." % p.progress.herbs)
 			_fx("heal", Data.HERBS[i], Data.HERBS[i], 25, Color("9fe8b0"))
 			return
-	if p.pos.distance_to(Data.NPC_POS) > 75:
+	var near_npc := false
+	for npc in Realm.NPCS:
+		if p.pos.distance_to(npc.pos) < 75:
+			near_npc = true
+	if not near_npc:
 		_message(p, "Aproxime-se de Lia ou de uma erva luminosa para interagir.")
 		return
 	var rewards := 0
 	for i in range(Data.QUESTS.size()):
 		var quest: Dictionary = Data.QUESTS[i]
-		if not p.claimed.has(i) and p.progress[quest.key] >= quest.goal:
+		if not p.claimed.has(i) and p.progress[quest.key] >= quest.goal and (not quest.has("requires") or p.claimed.has(quest.requires)):
 			p.claimed.append(i)
 			p.xp += quest.xp
 			p.gold += quest.gold
 			rewards += 1
-	_message(p, "%s missão(ões) entregues! Ouro e XP recebidos." % rewards if rewards > 0 else "Lia: consulte o diário (J), cumpra os objetivos e volte para receber ouro e XP.")
+	Expansion.open_dialogue(p)
+	_message(p, "%s missão(ões) entregues! Ouro e XP recebidos." % rewards if rewards > 0 else "Consulte o diário (J), cumpra os objetivos e volte ao acampamento para receber ouro e XP.")
 
 func _set_class(id: int, class_id: int) -> bool:
 	if not players.has(id) or class_id < 0 or class_id >= Data.CLASS_NAMES.size():
@@ -542,8 +640,9 @@ func _set_class(id: int, class_id: int) -> bool:
 	if p.class_id == class_id:
 		return true
 	p.class_id = class_id
-	p.max_hp = Data.CLASS_HP[class_id]
-	p.max_mana = Data.CLASS_MANA[class_id]
+	if Realm.ITEMS.get(p.equipped.weapon, {}).get("class", -1) != class_id:
+		p.equipped.weapon = Realm.STARTERS[class_id]
+	Expansion.recalculate(p)
 	p.hp = p.max_hp
 	p.mana = p.max_mana
 	p.cds = [0.0,0.0,0.0,0.0,0.0]
@@ -590,6 +689,9 @@ func _request_skill(slot: int, target: int) -> void:
 func _request_interaction() -> void:
 	if multiplayer.is_server():
 		_interact(multiplayer.get_remote_sender_id())
+		var id := multiplayer.get_remote_sender_id()
+		if players.has(id) and Realm.area_at(players[id].pos) == 1:
+			smoke_portal_received = true
 
 @rpc("any_peer", "call_remote", "reliable")
 func _request_class(class_id: int) -> void:
@@ -646,6 +748,7 @@ func _close_connection() -> void:
 func _connected() -> void:
 	if smoke_client:
 		choose_class(1)
+		equip_item("weapon","training_staff")
 	status_label.text = "Conectado • jogador %s" % multiplayer.get_unique_id()
 
 func _peer_connected(id: int) -> void:
@@ -692,7 +795,7 @@ func _update_animation(delta: float) -> void:
 	for id in players:
 		var pos: Vector2 = players[id].pos
 		if not animations.has(id):
-			animations[id] = {"pos": pos, "row": 0, "frame": 0, "elapsed": 0.0}
+			animations[id] = {"pos": pos, "row": 0, "frame": 0, "elapsed": 0.0, "distance":0.0}
 		var animation: Dictionary = animations[id]
 		var movement: Vector2 = pos - animation.pos
 		# Interpolate animation between network snapshots without altering game state.
@@ -702,9 +805,10 @@ func _update_animation(delta: float) -> void:
 			else:
 				animation.row = 3 if movement.y < 0 else 0
 			animation.elapsed = 0.12
+			animation.distance += movement.length()
 		else:
 			animation.elapsed = maxf(0, animation.elapsed - delta)
-		animation.frame = (int(Time.get_ticks_msec() / 125) % 4) if animation.elapsed > 0 and players[id].hp > 0 else 0
+		animation.frame = (int(animation.distance / 12) % 4) if animation.elapsed > 0 and players[id].hp > 0 else 0
 		animation.pos = pos
 
 
@@ -714,17 +818,74 @@ func _smoke_check(delta: float) -> void:
 	smoke_elapsed += delta
 	if smoke_client and players.has(multiplayer.get_unique_id()):
 		var mine: Dictionary = players[multiplayer.get_unique_id()]
+		if mine.cds[1] > 0:
+			smoke_special_confirmed = true
 		if not smoke_special_sent and mine.class_id == 1 and mine.pos.x > 390:
 			use_skill(1)
 			smoke_special_sent = true
+		if not smoke_portal_sent and mine.pos.distance_to(Realm.PORTALS[0].pos) < 38:
+			interact()
+			smoke_portal_sent = true
 	if smoke_client and smoke_elapsed > 2 and players.has(multiplayer.get_unique_id()):
 		var p: Dictionary = players[multiplayer.get_unique_id()]
-		if p.pos.x > SPAWN.x + 80 and monsters.size() == 6 and p.cds.size() == 5 and p.progress.has("golem") and p.class_id == 1 and p.cds[1] > 0:
-			print("NETWORK_CLIENT_PASS: authoritative movement, class change, special skill cooldown, enemy types and quests synchronized")
+		if p.pos.x > SPAWN.x + 80 and monsters.size() >= 17 and p.cds.size() == 5 and p.progress.has("golem") and p.class_id == 1 and Realm.area_at(p.pos) == 1 and p.equipped.weapon == "training_staff" and smoke_special_confirmed:
+			print("NETWORK_CLIENT_PASS: movement, class skill, equipment, regional portal travel, boss states and ten quests synchronized")
 			get_tree().quit(0)
-	if smoke_host and smoke_attack_received and smoke_special_received:
+	if smoke_host and smoke_attack_received and smoke_special_received and smoke_equip_received and smoke_portal_received:
 		print("NETWORK_HOST_PASS: remote combat input accepted")
 		smoke_host = false
 	if smoke_client and smoke_elapsed > 12:
 		push_error("NETWORK_CLIENT_FAIL: no authoritative state")
 		get_tree().quit(1)
+
+func equip_item(slot: String, item_id: String) -> void:
+	if _is_authority():
+		Expansion.equip(self, 1, slot, item_id)
+	else:
+		_request_equip.rpc_id(1, slot, item_id)
+
+@rpc("any_peer", "call_remote", "reliable")
+func _request_equip(slot: String, item_id: String) -> void:
+	if multiplayer.is_server():
+		if Expansion.equip(self,multiplayer.get_remote_sender_id(),slot,item_id):
+			smoke_equip_received = true
+
+func player_display_pos(id: int) -> Vector2:
+	return render_players.get(id, players[id].pos)
+
+func enemy_display_pos(id: int) -> Vector2:
+	return render_enemies.get(id, monsters[id].pos)
+
+func _update_presentation(delta: float) -> void:
+	for id in render_players.keys():
+		if not players.has(id):
+			render_players.erase(id)
+	for id in players:
+		var target: Vector2 = players[id].pos
+		var before: Vector2 = render_players.get(id, target)
+		render_players[id] = target if before.distance_to(target) > 200 else before.lerp(target, 1 - exp(-18 * delta))
+	for i in range(monsters.size()):
+		var target: Vector2 = monsters[i].pos
+		var before: Vector2 = render_enemies.get(i, target)
+		render_enemies[i] = target if before.distance_to(target) > 200 else before.lerp(target, 1 - exp(-15 * delta))
+	var shot_ids: Array = []
+	for shot in projectiles:
+		shot_ids.append(shot.id)
+		var target: Vector2 = shot.pos
+		var before: Vector2 = render_projectiles.get(shot.id,target)
+		render_projectiles[shot.id] = before.lerp(target,1-exp(-22*delta))
+	for id in render_projectiles.keys():
+		if not shot_ids.has(id):
+			render_projectiles.erase(id)
+	var local_id := multiplayer.get_unique_id()
+	if players.has(local_id):
+		var area := Realm.area_at(players[local_id].pos)
+		if area < 0:
+			return
+		var bounds: Rect2 = Realm.AREAS[area].rect
+		var target: Vector2 = player_display_pos(local_id)
+		target.x = clampf(target.x, bounds.position.x + 576, bounds.end.x - 576)
+		target.y = clampf(target.y, bounds.position.y + 360, bounds.end.y - 360) if bounds.size.y >= 720 else 360
+		camera.position = target if not camera_initialized or camera.position.distance_to(target) > 800 else camera.position.lerp(target, 1 - exp(-10 * delta))
+		camera_initialized = true
+		camera.force_update_scroll()

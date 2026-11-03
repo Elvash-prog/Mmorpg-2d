@@ -184,7 +184,7 @@ func _run() -> void:
 	assert(p.gold == 40 and p.xp == 75 and p.claimed.has(3))
 	world._interact(1)
 	assert(p.gold == 40 and p.xp == 75, "Quest reward must only be claimed once")
-	for quest in Data.QUESTS:
+	for quest in Data.QUESTS.slice(0,5):
 		p.progress[quest.key] = quest.goal
 	world._interact(1)
 	assert(p.claimed.size() == 5 and p.gold == 220 and p.xp == 445)

@@ -31,14 +31,21 @@ const SKILLS := [
 const ENEMIES := [
 	{"name":"Limo verde", "hp":65.0, "speed":58.0, "damage":9.0, "reach":35.0, "windup":0.4, "radius":36.0, "xp":25, "key":"slime"},
 	{"name":"Lobo cinzento", "hp":95.0, "speed":90.0, "damage":14.0, "reach":43.0, "windup":0.5, "radius":44.0, "xp":40, "key":"wolf"},
-	{"name":"Sentinela de pedra", "hp":210.0, "speed":40.0, "damage":26.0, "reach":65.0, "windup":0.9, "radius":68.0, "xp":85, "key":"golem"}
+	{"name":"Sentinela de pedra", "hp":210.0, "speed":40.0, "damage":26.0, "reach":65.0, "windup":0.9, "radius":68.0, "xp":85, "key":"golem"},
+	{"name":"Matriarca dos Espinhos", "hp":950.0, "speed":65.0, "damage":20.0, "reach":110.0, "windup":1.1, "radius":90.0, "xp":240, "key":"boss_forest"},
+	{"name":"Arconte do Ocaso", "hp":1350.0, "speed":50.0, "damage":28.0, "reach":120.0, "windup":1.3, "radius":210.0, "xp":350, "key":"boss_ruins"}
 ]
 const QUESTS := [
 	{"title":"Primeiros passos", "key":"slime", "goal":3, "xp":70, "gold":30, "text":"Derrote 3 limos verdes."},
 	{"title":"Uivos no vale", "key":"wolf", "goal":2, "xp":100, "gold":50, "text":"Derrote 2 lobos cinzentos."},
 	{"title":"Pedra desperta", "key":"golem", "goal":1, "xp":150, "gold":75, "text":"Derrote uma sentinela de pedra."},
 	{"title":"Ervas do curandeiro", "key":"herbs", "goal":3, "xp":75, "gold":40, "text":"Colete as 3 ervas luminosas usando F."},
-	{"title":"Explorador do vale", "key":"visit", "goal":1, "xp":50, "gold":25, "text":"Visite o marco azul a sudeste."}
+	{"title":"Explorador do vale", "key":"visit", "goal":1, "xp":50, "gold":25, "text":"Visite o marco azul a sudeste."},
+	{"title":"A memória das raízes", "key":"forest_beacon", "goal":1, "xp":100, "gold":50, "text":"Toque o santuário no Bosque dos Ecos. Descubra o que feriu a Matriarca.", "requires":4},
+	{"title":"Um coração sob os espinhos", "key":"boss_forest", "goal":1, "xp":200, "gold":100, "text":"Liberte a Matriarca na clareira. Evite espinhos e esporos.", "requires":5},
+	{"title":"O primeiro juramento", "key":"ruins_beacon", "goal":1, "xp":140, "gold":70, "text":"Ouça a memória de Íria na Cidadela do Ocaso.", "requires":6},
+	{"title":"A luz aprisionada", "key":"boss_ruins", "goal":1, "xp":300, "gold":160, "text":"Vença o Arconte. Quebre os pilares para remover seu escudo.", "requires":7},
+	{"title":"A próxima manhã", "key":"restore", "goal":1, "xp":300, "gold":200, "text":"Volte à fonte e reúna as duas ressonâncias com F. Entregue a missão a Lia.", "requires":8}
 ]
 const NPC_POS := Vector2(365, 385)
 const LANDMARK := Vector2(880, 490)

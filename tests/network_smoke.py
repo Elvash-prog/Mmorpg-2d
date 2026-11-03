@@ -39,4 +39,4 @@ with tempfile.TemporaryFile(mode="w+t") as log:
     assert client.returncode == 0, "Cliente não concluiu o teste"
     assert "NETWORK_CLIENT_PASS" in output and "NETWORK_HOST_PASS" in output
     assert "ERROR:" not in output and "MTU" not in output
-print("NETWORK_PASS: real peers, compressed state, class change, special skill and quests")
+print("NETWORK_PASS: real peers, compressed state, class skill, equipment, regional portal and quest state")

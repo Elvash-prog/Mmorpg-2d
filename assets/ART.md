@@ -12,7 +12,7 @@ Direção de arte: vila original vista de cima em pixel art, gramado vivo, água
 
 ## Ações de classe (`class_actions.png`)
 
-Folha com quatro colunas e três linhas: guerreiro, maga e patrulheira. Cada linha representa repouso, preparação, golpe/conjuração e recuperação. Gerada por IA com personagens originais e fundo transparente. O guerreiro usa a folha anterior para caminhar em quatro direções. Maga e patrulheira têm pose própria, espelhamento horizontal e oscilação de caminhada; ainda precisam de folhas completas em quatro direções.
+Folha com quatro colunas e três linhas: guerreiro, maga e patrulheira. Cada linha representa repouso, preparação, golpe/conjuração e recuperação. Gerada por IA com personagens originais e fundo transparente. O guerreiro usa a folha anterior para caminhar em quatro direções. As folhas `mage_walk.png` e `ranger_walk.png` agora acrescentam caminhada em quatro direções para as outras duas classes. Todas usam quatro colunas e quatro linhas, com quadros guiados pela distância percorrida.
 
 ## Inimigos (`enemies.png`)
 
@@ -21,3 +21,13 @@ Folha de quatro colunas e três linhas: limo de cristais, lobo cinzento e golem 
 O mapa permanece um fundo ilustrado, agora com máscaras de colisão alinhadas à casa, rio, rochas e massas de árvores. A ponte é transitável. As máscaras definidas em `scripts/map_rules.gd` são aproximações das áreas sólidas; não são recortes por pixel. Não há tiles individuais, interiores ou oclusão por camadas.
 
 Efeitos de corte, partículas, números, projéteis, áreas de aviso, escudos e cura são desenhados pelo Godot sobre as folhas, conforme o estado autoritativo do servidor. O NPC Lia e os itens interativos ainda usam desenhos simples por código. APK e desempenho em aparelhos Android reais ainda não foram validados.
+
+## Expansão: mapas, chefes e habilidades
+
+`forest.png` e `ruins.png` são mapas originais gerados por IA, integrados como regiões de 2304 × 1272 unidades, com câmera, máscaras de colisão aproximadas e objetos interativos definidos pelo jogo. As imagens de origem foram preservadas; não foram convertidas em um TileSet.
+
+`bosses.png` contém três poses para a Matriarca dos Espinhos e três para o Arconte do Ocaso, em uma grade 3 × 2. A ferramenta de geração também foi usada para limpar o fundo, e a versão integrada possui transparência. `mage_walk.png` e `ranger_walk.png` mantêm as roupas das respectivas classes em dezesseis quadros por folha.
+
+`skill_atlas.png` tem grade 5 × 4: três linhas de ícones das cinco habilidades de cada classe e uma linha com corte, fogo, gelo, raio e cura. Esses recursos são usados na barra, nos projéteis e nos efeitos de impacto. O Godot faz recortes proporcionais em tempo de renderização, sem editar destrutivamente as imagens.
+
+Painéis e elementos interativos (baús, pilares, portais e santuários) são construídos por código. Ainda não há sprite de vestimenta individual para cada item equipado. A animação dos inimigos comuns combina poucas poses, espelhamento, deslocamento suavizado e patrulhas; ela ainda pode ser refinada.

@@ -1,6 +1,30 @@
 extends Control
+const Realm = preload("res://scripts/realm_data.gd")
+const Panels = preload("res://scripts/adventure_panels.gd")
+const ATLAS = preload("res://assets/skill_atlas.png")
 const Data = preload("res://scripts/game_data.gd")
 const ACTIONS = preload("res://assets/class_actions.png")
+var story_panel: Panel
+var character_panel: Panel
+var story_title: Label
+var story_speaker: Label
+var story_body: RichTextLabel
+var character_stats: RichTextLabel
+var character_feedback: Label
+var class_feedback: Label
+var class_buttons: Array[Button] = []
+var last_class_style := -1
+var gear_buttons: Array[Button] = []
+var inventory_list: VBoxContainer
+var item_details: RichTextLabel
+var equip_button: Button
+var selected_item := ""
+var inventory_signature := ""
+var last_dialogue_seq := 0
+var skill_icons: Array[Sprite2D] = []
+var skill_cooldowns: Array[Label] = []
+var area_title: Label
+var minimap_title: Label
 var world: Node2D
 var status_label: Label
 var stats_label: Label
@@ -53,14 +77,14 @@ func _ready() -> void:
 	energy_text = _label(self, "", Vector2(130, 70), 12, Color.WHITE)
 	xp_text = _label(self, "", Vector2(24, 110), 12, Color("efdfb8"))
 	_panel(self, Rect2(428, 12, 296, 40))
-	_label(self, "✦  VALE DA AURORA  ✦", Vector2(467, 21), 17, Color("f0d9a0"))
+	area_title = _label(self, "✦  VALE DA AURORA  ✦", Vector2(450, 21), 16, Color("f0d9a0"))
 	_panel(self, Rect2(428, 60, 296, 48), Color(0.1, 0.14, 0.13, 0.88))
 	target_label = _label(self, "Clique em um inimigo ou use TAB", Vector2(440, 65), 12, Color("f3deb2"))
 	target_health = _bar(Rect2(440, 91, 272, 6), Color("d98c73"))
-	_label(self, "VALE DA AURORA", Vector2(994, 20), 13, Color("e8d5a0"))
+	minimap_title = _label(self, "VALE DA AURORA", Vector2(981, 20), 12, Color("e8d5a0"))
 	_label(self, "◆ Você   • Inimigos", Vector2(984, 144), 12, Color("c6d9c4"))
 	_panel(self, Rect2(894, 184, 246, 144))
-	_label(self, "MISSÕES DO VALE", Vector2(908, 193), 14, Color("f0d9a0"))
+	_label(self, "CRÔNICA DA AURORA", Vector2(908, 193), 14, Color("f0d9a0"))
 	quest_label = _label(self, "", Vector2(908, 220), 13, Color("f1ede1"))
 	var quest_button := _button(self, "DIÁRIO [J]", Rect2(908, 288, 218, 28))
 	quest_button.pressed.connect(toggle_journal)
@@ -69,7 +93,7 @@ func _ready() -> void:
 	status_label = _label(self, "Modo solo • progresso temporário", Vector2(24, 566), 12, Color("d3dfcd"))
 	event_label = _label(self, "", Vector2(24, 590), 12, Color("b8d4c3"))
 	_panel(self, Rect2(0, 634, 1152, 86))
-	for item in [["MENU", 12, 80], ["CLASSES", 102, 88], ["DIÁRIO", 200, 88]]:
+	for item in [["MENU",12,80],["CLASSES",102,88],["DIÁRIO",200,88]]:
 		var button := _button(self, item[0], Rect2(item[1], 650, item[2], 48))
 		if item[0] == "MENU":
 			button.pressed.connect(func(): _toggle(guide_panel))
@@ -77,7 +101,10 @@ func _ready() -> void:
 			button.pressed.connect(func(): _toggle(class_panel))
 		else:
 			button.pressed.connect(toggle_journal)
-	stats_label = _label(self, "", Vector2(300, 654), 11, Color("c9be9e"))
+	stats_label = _label(self,"",Vector2(300,646),10,Color("c9be9e"))
+	var character_button := _button(self,"PERSON. [C]",Rect2(298,678,90,30))
+	character_button.add_theme_font_size_override("font_size",10)
+	character_button.pressed.connect(toggle_character)
 	for i in range(5):
 		var button := _button(self, str(i + 1), Rect2(398 + i * 91, 643, 82, 66))
 		button.add_theme_font_size_override("font_size", 12)
@@ -88,6 +115,14 @@ func _ready() -> void:
 			attack_button = button
 		else:
 			button.pressed.connect(func(): world.use_skill(i))
+		var icon := Sprite2D.new()
+		icon.texture = ATLAS
+		icon.region_enabled = true
+		icon.position = Vector2(41,24)
+		button.add_child(icon)
+		skill_icons.append(icon)
+		skill_cooldowns.append(_label(button,"",Vector2(22,12),18,Color("fff2bf")))
+		_label(button,str(i+1),Vector2(5,3),11,Color("f3dfa6"))
 		skill_buttons.append(button)
 	var target_button := _button(self, "ALVO\nTAB", Rect2(858, 650, 72, 48))
 	target_button.pressed.connect(world.cycle_target)
@@ -101,39 +136,33 @@ func _ready() -> void:
 	_build_guide_panel()
 	_build_class_panel()
 	_build_journal_panel()
+	Panels.build_story(self)
+	Panels.build_character(self)
 	notice = _label(self, "", Vector2(365, 120), 17, Color("fff0b7"))
 
 func _build_class_panel() -> void:
-	class_panel = _panel(self, Rect2(290, 155, 572, 370))
-	class_panel.hide()
-	_label(class_panel, "ESCOLHA SUA CLASSE", Vector2(22, 18), 20, Color("efd99e"))
-	_label(class_panel, "Troque junto à fonte e fora de combate.", Vector2(22, 55), 14, Color("d7d5c3"))
-	for i in range(3):
-		var button := _button(class_panel, Data.CLASS_NAMES[i], Rect2(22 + i * 178, 87, 167, 40))
-		button.pressed.connect(func(): world.choose_class(i))
-	class_details = _label(class_panel, "", Vector2(22, 150), 14, Color("e3dfc8"))
-	var close := _button(class_panel, "×", Rect2(522, 12, 32, 32))
-	close.pressed.connect(close_modals)
+	Panels.build_class(self)
 
 func _build_journal_panel() -> void:
-	journal_panel = _panel(self, Rect2(230, 150, 692, 380))
-	journal_panel.hide()
-	_label(journal_panel, "DIÁRIO  /  MISSÕES DE LIA", Vector2(22, 18), 20, Color("efd99e"))
-	for i in range(Data.QUESTS.size()):
-		quest_rows.append(_label(journal_panel, "", Vector2(22, 58 + i * 47), 13, Color("e3dfc8")))
-	var deliver := _button(journal_panel, "Entregar a Lia [F]", Rect2(22, 310, 245, 42))
-	deliver.pressed.connect(world.interact)
-	_label(journal_panel, "Aproxime-se de Lia para receber as recompensas.", Vector2(280, 322), 12, Color("bfcdb7"))
-	var close := _button(journal_panel, "×", Rect2(642, 12, 32, 32))
-	close.pressed.connect(close_modals)
+	Panels.build_journal(self)
 
 func _build_guide_panel() -> void:
-	guide_panel = _panel(self, Rect2(260, 195, 632, 300))
-	guide_panel.hide()
-	_label(guide_panel, "AURORA  /  GUIA DO VIAJANTE", Vector2(24, 18), 20, Color("efd99e"))
-	_label(guide_panel, "WASD / setas: mover · Clique ou TAB: selecionar inimigo\nEspaço / 1: ataque básico · 2–5: habilidades da classe\nF / USAR: coletar ervas e conversar com Lia · J: diário\n\nAs áreas vermelhas avisam onde o inimigo vai atacar: desvie!\nA fonte recupera vida e energia e permite trocar de classe.\nUse CLASSES para escolher guerreiro, maga ou patrulheira.\nNo Android, use o direcional, ALVO e os cinco botões.\nProgresso temporário: sem contas ou salvamento nesta versão.", Vector2(24, 60), 15, Color("e0dfcc"))
-	var close := _button(guide_panel, "×", Rect2(582, 12, 32, 32))
-	close.pressed.connect(close_modals)
+	Panels.build_menu(self)
+
+func toggle_character() -> void:
+	_toggle(character_panel)
+
+func open_story() -> void:
+	_toggle(story_panel)
+	var p: Dictionary = world.players.get(multiplayer.get_unique_id(),{})
+	if not p.is_empty():
+		_show_chapter(Realm.chapter(p))
+
+func _show_chapter(chapter: int) -> void:
+	var entry: Dictionary = Realm.STORY[clampi(chapter,0,Realm.STORY.size()-1)]
+	story_title.text = entry.title
+	story_speaker.text = entry.speaker
+	story_body.text = entry.text
 
 func _toggle(panel: Panel) -> void:
 	var was_visible := panel.visible
@@ -144,14 +173,14 @@ func toggle_journal() -> void:
 	_toggle(journal_panel)
 
 func close_modals() -> void:
-	for panel in [network_panel, guide_panel, class_panel, journal_panel]:
+	for panel in [network_panel,guide_panel,class_panel,journal_panel,story_panel,character_panel]:
 		if is_instance_valid(panel):
 			panel.hide()
 	world.touch_attack = false
 	world.touch_direction = Vector2.ZERO
 
 func modal_open() -> bool:
-	for panel in [network_panel, guide_panel, class_panel, journal_panel]:
+	for panel in [network_panel,guide_panel,class_panel,journal_panel,story_panel,character_panel]:
 		if is_instance_valid(panel) and panel.visible:
 			return true
 	return false
@@ -206,23 +235,51 @@ func refresh() -> void:
 	for i in range(Data.QUESTS.size()):
 		var quest: Dictionary = Data.QUESTS[i]
 		var progress: int = mini(p.progress[quest.key], quest.goal)
-		var state := "ENTREGUE" if p.claimed.has(i) else ("ENTREGAR" if progress >= quest.goal else "%s/%s" % [progress, quest.goal])
+		var locked: bool = quest.has("requires") and not p.claimed.has(quest.requires)
+		var state := "ENTREGUE" if p.claimed.has(i) else ("CAPÍTULO BLOQUEADO" if locked else ("ENTREGAR" if progress >= quest.goal else "%s/%s" % [progress,quest.goal]))
 		if state == "ENTREGAR":
 			available += 1
-		quest_rows[i].text = "%s · %s · %s XP / %s ouro\n%s" % [quest.title, state, quest.xp, quest.gold, quest.text]
+		quest_rows[i].text = "%s  ·  %s\n%s\nRecompensa: %s XP + %s ouro%s" % [quest.title,state,quest.text,quest.xp,quest.gold,"  ·  Requer: " + Data.QUESTS[quest.requires].title if locked else ""]
 		if i < 2:
 			summary += "%s: %s\n" % [quest.title, state]
-	quest_label.text = summary + "%s/5 entregues · %s prontas" % [p.claimed.size(), available]
-	stats_label.text = "%s online\n%s abatidos\n[J] missões" % [world.players.size(), p.kills]
+	var local_area := maxi(0,Realm.area_at(p.pos))
+	var priorities := [0,1] if local_area == 0 else ([5,6] if local_area == 1 else [7,8])
+	summary = ""
+	for i in priorities:
+		var quest: Dictionary = Data.QUESTS[i]
+		var locked: bool = quest.has("requires") and not p.claimed.has(quest.requires)
+		var state := "OK" if p.claimed.has(i) else ("bloq." if locked else "%s/%s" % [mini(p.progress[quest.key],quest.goal),quest.goal])
+		summary += quest.title.left(21) + ": " + state + "\n"
+	quest_label.text = summary + "%s/10 entregues · %s prontas" % [p.claimed.size(),available]
+	stats_label.text = "%s jogador(es)\n%s abatidos" % [world.players.size(),p.kills]
 	var details: String = Data.CLASS_NAMES[p.class_id] + " · %s vida / %s energia\n\n" % [int(p.max_hp), int(p.max_mana)]
 	for i in range(5):
 		var skill: Dictionary = Data.SKILLS[p.class_id][i]
 		var remaining: float = p.cds[i]
-		skill_buttons[i].text = "%s\n%s\n%s" % [i + 1, Data.SKILL_SHORT_NAMES[p.class_id][i], "%.1fs" % remaining if remaining > 0 else "%s EN" % skill.cost]
+		skill_buttons[i].text = "\n\n" + Data.SKILL_SHORT_NAMES[p.class_id][i]
+		var cell := ATLAS.get_size()/Vector2(5,4)
+		skill_icons[i].region_rect = Rect2(Vector2(i,p.class_id)*cell,cell)
+		skill_icons[i].scale = Vector2(35,35)/cell
+		skill_cooldowns[i].text = "%.1f" % remaining if remaining > 0 else ""
 		skill_buttons[i].tooltip_text = "%s\n%s EN · %.1f s de recarga\n%s" % [skill.name, skill.cost, skill.cd, skill.desc]
 		skill_buttons[i].modulate = Color("a8b2a2") if remaining > 0 or p.mana < skill.cost else Color.WHITE
-		details += "%s. %s · %s EN · %.1fs\n" % [i + 1, skill.name, skill.cost, skill.cd]
+		details += "%s. %s · %s EN · %.1fs\n%s\n\n" % [i+1,skill.name,skill.cost,skill.cd,skill.desc]
 	class_details.text = details
+	class_feedback.text = p.message
+	if last_class_style != p.class_id:
+		last_class_style = p.class_id
+		for i in range(class_buttons.size()):
+			class_buttons[i].add_theme_stylebox_override("normal",_style(Color("2c4148") if i == p.class_id else Color("1b2e39"),Data.CLASS_COLORS[i] if i == p.class_id else Color("697a7d")))
+	Panels.refresh_character(self,p)
+	var area := maxi(0,Realm.area_at(p.pos))
+	area_title.text = Realm.AREAS[area].name.to_upper()
+	minimap_title.text = Realm.AREAS[area].name.to_upper()
+	if p.dialogue_seq != last_dialogue_seq:
+		last_dialogue_seq = p.dialogue_seq
+		if p.dialogue_seq > 0:
+			close_modals()
+			story_panel.show()
+			_show_chapter(p.dialogue_chapter)
 	if previous_message != p.message:
 		previous_message = p.message
 		event_label.text = p.message
@@ -251,21 +308,28 @@ func _process(delta: float) -> void:
 func _draw() -> void:
 	draw_style_box(_style(Color(0.10, 0.14, 0.13, 0.95)), Rect2(970, 12, 170, 155))
 	var map_rect := Rect2(982, 46, 146, 88)
-	var source_scale: Vector2 = world.MAP_TEXTURE.get_size() / Vector2(1152, 636)
-	draw_texture_rect_region(world.MAP_TEXTURE, map_rect, Rect2(world.ARENA.position * source_scale, world.ARENA.size * source_scale))
+	var local: Dictionary = world.players.get(multiplayer.get_unique_id(),{})
+	var area := maxi(0,Realm.area_at(local.pos)) if not local.is_empty() else 0
+	var maps: Array[Texture2D] = [world.MAP_TEXTURE,world.visuals.FOREST,world.visuals.RUINS]
+	draw_texture_rect(maps[area],map_rect,false)
 	for monster in world.monsters:
-		if monster.hp > 0:
-			draw_rect(Rect2(_map_position(monster.pos, map_rect) - Vector2(2, 2), Vector2(4, 4)), [Color("c4dd7c"), Color("e9b68a"), Color("a4d7ea")][monster.kind])
-	draw_circle(_map_position(Data.NPC_POS, map_rect), 2, Color("fff2af"))
+		if monster.hp > 0 and Realm.area_at(monster.pos) == area:
+			draw_rect(Rect2(_map_position(monster.pos, map_rect) - Vector2(2, 2), Vector2(4, 4)), [Color("c4dd7c"),Color("e9b68a"),Color("a4d7ea"),Color("ef9da8"),Color("c8a4fb")][monster.kind])
+	for npc in Realm.NPCS:
+		if npc.area == area:
+			draw_circle(_map_position(npc.pos,map_rect),2,Color("fff2af"))
 	for id in world.players:
-		if world.players[id].hp <= 0:
+		if world.players[id].hp <= 0 or Realm.area_at(world.players[id].pos) != area:
 			continue
 		var pos := _map_position(world.players[id].pos, map_rect)
 		var color := Color("fff5b8") if id == multiplayer.get_unique_id() else Color("8edcff")
 		draw_colored_polygon(PackedVector2Array([pos + Vector2(0, -4), pos + Vector2(4, 0), pos + Vector2(0, 4), pos + Vector2(-4, 0)]), color)
 
 func _map_position(pos: Vector2, rect: Rect2) -> Vector2:
-	var ratio: Vector2 = (pos - world.ARENA.position) / world.ARENA.size
+	var local: Dictionary = world.players.get(multiplayer.get_unique_id(),{})
+	var area := maxi(0,Realm.area_at(local.pos)) if not local.is_empty() else 0
+	var bounds: Rect2 = Realm.AREAS[area].rect
+	var ratio: Vector2 = (pos-bounds.position)/bounds.size
 	return rect.position + ratio.clamp(Vector2.ZERO, Vector2.ONE) * rect.size
 
 func _build_network_panel() -> void:
@@ -294,12 +358,12 @@ func _style(fill: Color, border := Color("a38b58")) -> StyleBoxFlat:
 	style.bg_color = fill
 	style.border_color = border
 	style.set_border_width_all(2)
-	style.set_corner_radius_all(3)
+	style.set_corner_radius_all(8)
 	style.shadow_color = Color(0, 0, 0, 0.25)
-	style.shadow_size = 3
+	style.shadow_size = 10
 	return style
 
-func _panel(parent: Node, rect: Rect2, fill := Color(0.10, 0.14, 0.13, 0.95)) -> Panel:
+func _panel(parent: Node, rect: Rect2, fill := Color(0.055,0.09,0.13,0.98)) -> Panel:
 	var panel := Panel.new()
 	panel.position = rect.position
 	panel.size = rect.size
@@ -326,8 +390,8 @@ func _button(parent: Node, text: String, rect: Rect2) -> Button:
 	button.position = rect.position
 	button.size = rect.size
 	button.focus_mode = Control.FOCUS_NONE
-	button.add_theme_stylebox_override("normal", _style(Color("2c3633")))
-	button.add_theme_stylebox_override("hover", _style(Color("4b5946"), Color("efd18c")))
+	button.add_theme_stylebox_override("normal", _style(Color("233440")))
+	button.add_theme_stylebox_override("hover", _style(Color("34505a"), Color("efd18c")))
 	button.add_theme_stylebox_override("pressed", _style(Color("665a39"), Color("ffe4a7")))
 	button.add_theme_stylebox_override("disabled", _style(Color("202a28"), Color("6d7158")))
 	button.add_theme_color_override("font_color", Color("ffe6ac"))

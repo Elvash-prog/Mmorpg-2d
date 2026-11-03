@@ -26,7 +26,7 @@ func _run() -> void:
 	for class_id in range(3):
 		assert(world._set_class(1, class_id))
 		hud.refresh()
-		assert(hud.skill_buttons.size() == 5 and hud.quest_rows.size() == 5)
+		assert(hud.skill_buttons.size() == 5 and hud.quest_rows.size() == Data.QUESTS.size())
 		for i in range(5):
 			assert(not hud.skill_buttons[i].disabled and Data.SKILLS[class_id][i].name in hud.skill_buttons[i].tooltip_text)
 		assert(hud.class_label.text == Data.CLASS_NAMES[class_id].to_upper())
@@ -48,8 +48,8 @@ func _run() -> void:
 	hud.refresh()
 	assert("Limo" in hud.target_label.text)
 	var map_rect := Rect2(0, 0, 100, 100)
-	assert(hud._map_position(world.ARENA.position, map_rect) == Vector2.ZERO)
-	assert(hud._map_position(world.ARENA.end, map_rect) == Vector2(100, 100))
+	assert(hud._map_position(Vector2.ZERO, map_rect) == Vector2.ZERO)
+	assert(hud._map_position(Vector2(1152,636), map_rect) == Vector2(100, 100))
 	world._reset_world()
 	hud.previous_message = ""
 	hud.previous_dead = false

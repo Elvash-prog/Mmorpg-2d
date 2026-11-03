@@ -1,5 +1,6 @@
 extends RefCounted
 ## Hand-aligned foot collision masks over the illustrated background.
+const Realm = preload("res://scripts/realm_data.gd")
 const BOUNDS := Rect2(16, 112, 1120, 490)
 const BLOCKERS := [
 	Rect2(32, 112, 83, 181), # Stream north of bridge.
@@ -17,10 +18,19 @@ const BLOCKERS := [
 	Rect2(712, 574, 42, 28)
 ]
 
+const EXTRA_BLOCKERS := [
+	Rect2(1850,130,210,200), Rect2(1950,850,160,180),
+	Rect2(3200,140,160,170), Rect2(1400,1060,180,140),
+	Rect2(1800,1450,210,170), Rect2(1990,2140,170,200),
+	Rect2(3220,1430,140,180), Rect2(1440,2290,150,150)
+]
+
 static func blocked(pos: Vector2, radius := 11.0) -> bool:
-	if not BOUNDS.grow(-radius).has_point(pos):
+	var area := Realm.area_at(pos)
+	if area < 0 or not Realm.AREAS[area].walk.grow(-radius).has_point(pos):
 		return true
-	for rect in BLOCKERS:
+	var masks: Array = BLOCKERS if area == 0 else EXTRA_BLOCKERS
+	for rect in masks:
 		if rect.grow(radius).has_point(pos):
 			return true
 	return false
