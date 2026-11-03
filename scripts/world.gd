@@ -3,7 +3,7 @@ extends Node2D
 
 const PORT := 24567
 const SPEED := 165.0
-const ARENA := Rect2(48, 152, 1056, 410)
+const ARENA := Rect2(16, 112, 1120, 490)
 const SPAWN := Vector2(300, 340)
 var players: Dictionary = {}
 var monsters: Array[Dictionary] = []
@@ -18,6 +18,7 @@ var stats_label: Label
 var address: LineEdit
 var host_button: Button
 var join_button: Button
+var hud: Control
 var smoke_client := false
 var smoke_host := false
 var smoke_elapsed := 0.0
@@ -54,7 +55,7 @@ func _new_player() -> Dictionary:
 
 func _process(delta: float) -> void:
 	var direction := _keyboard_direction() + touch_direction
-	var attack := Input.is_physical_key_pressed(KEY_SPACE) or touch_attack
+	var attack := Input.is_physical_key_pressed(KEY_SPACE) or Input.is_physical_key_pressed(KEY_1) or touch_attack
 	if address.has_focus():
 		direction = touch_direction
 		attack = touch_attack
@@ -209,114 +210,28 @@ func _server_disconnected() -> void:
 func _build_ui() -> void:
 	var layer := CanvasLayer.new()
 	add_child(layer)
-	var root := Control.new()
-	root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	layer.add_child(root)
-	var title := Label.new()
-	title.text = "A U R O R A   /   FRONTEIRA VIVA"
-	title.position = Vector2(40, 20)
-	title.add_theme_font_size_override("font_size", 26)
-	title.modulate = Color("f3d998")
-	root.add_child(title)
-	stats_label = Label.new()
-	stats_label.position = Vector2(40, 59)
-	root.add_child(stats_label)
-	status_label = Label.new()
-	status_label.text = "Modo solo • explore e experimente o combate"
-	status_label.position = Vector2(40, 94)
-	root.add_child(status_label)
-	address = LineEdit.new()
-	address.position = Vector2(661, 30)
-	address.size = Vector2(185, 42)
-	address.text = "127.0.0.1"
-	address.placeholder_text = "IP do anfitrião"
-	root.add_child(address)
-	host_button = _button(root, "Hospedar", Vector2(858, 30), Vector2(118, 42))
-	host_button.pressed.connect(_host)
-	join_button = _button(root, "Conectar", Vector2(986, 30), Vector2(118, 42))
-	join_button.pressed.connect(_join)
-	var hint := Label.new()
-	hint.text = "WASD / setas: mover   •   Espaço: atacar   •   Fonte: recuperar vida\nMissão: derrote 5 limos. Aproxime-se e segure o ataque."
-	hint.position = Vector2(370, 604)
-	root.add_child(hint)
-	_touch_button(root, "↑", Vector2(104, 582), Vector2.UP)
-	_touch_button(root, "←", Vector2(40, 644), Vector2.LEFT)
-	_touch_button(root, "↓", Vector2(104, 644), Vector2.DOWN)
-	_touch_button(root, "→", Vector2(168, 644), Vector2.RIGHT)
-	var attack := TouchScreenButton.new()
-	attack.position = Vector2(1042, 648)
-	attack.shape = _touch_shape(Vector2(108, 108))
-	attack.pressed.connect(func(): touch_attack = true)
-	attack.released.connect(func(): touch_attack = false)
-	root.add_child(attack)
-	var label := Label.new()
-	label.text = "ATACAR"
-	label.position = Vector2(1010, 636)
-	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	root.add_child(label)
-
-func _button(parent: Control, text: String, pos: Vector2, dimensions: Vector2) -> Button:
-	var button := Button.new()
-	button.text = text
-	button.position = pos
-	button.size = dimensions
-	parent.add_child(button)
-	return button
-
-func _touch_shape(dimensions: Vector2) -> RectangleShape2D:
-	var shape := RectangleShape2D.new()
-	shape.size = dimensions
-	return shape
-
-func _touch_button(parent: Control, text: String, pos: Vector2, direction: Vector2) -> void:
-	var touch := TouchScreenButton.new()
-	touch.position = pos + Vector2(28, 28)
-	touch.shape = _touch_shape(Vector2(56, 56))
-	touch.pressed.connect(func(): touch_direction += direction)
-	touch.released.connect(func(): touch_direction -= direction)
-	parent.add_child(touch)
-	var label := Label.new()
-	label.text = text
-	label.position = pos + Vector2(21, 12)
-	label.add_theme_font_size_override("font_size", 24)
-	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	parent.add_child(label)
+	hud = preload("res://scripts/hud.gd").new()
+	hud.world = self
+	layer.add_child(hud)
+	status_label = hud.status_label
+	stats_label = hud.stats_label
+	address = hud.address
+	host_button = hud.host_button
+	join_button = hud.join_button
 
 func _update_labels() -> void:
-	var id := multiplayer.get_unique_id()
-	if players.has(id):
-		var p: Dictionary = players[id]
-		var quest := "CONCLUÍDA!" if p.kills >= 5 else "%s / 5 limos" % p.kills
-		stats_label.text = "GUARDIÃO   •   Vida %s/100   •   XP %s   •   Missão: %s" % [ceili(p.hp), p.xp, quest]
-		if p.hp <= 0:
-			stats_label.text += "   •   Retornando à fonte…"
+	hud.refresh()
 
 func _draw() -> void:
-	draw_rect(ARENA.grow(5), Color("50624e"))
-	draw_rect(ARENA, Color("263e35"))
-	for y in range(160, 558, 24):
-		for x in range(56, 1100, 24):
-			var n := (x * 13 + y * 7) % 17
-			if n < 6:
-				draw_line(Vector2(x, y), Vector2(x + 3, y - 4), Color("365347"), 2)
-	draw_rect(Rect2(48, 320, 1056, 45), Color("75694d"))
-	draw_rect(Rect2(275, 152, 45, 410), Color("75694d"))
-	for pos in [Vector2(130, 215), Vector2(170, 470), Vector2(1000, 200), Vector2(1000, 490), Vector2(440, 480), Vector2(465, 205)]:
-		draw_rect(Rect2(pos + Vector2(-5, 0), Vector2(10, 24)), Color("694b36"))
-		draw_circle(pos, 28, Color("182e2b"))
-		draw_circle(pos + Vector2(-5, -8), 22, Color("477455"))
-	draw_circle(SPAWN, 56, Color(0.3, 0.8, 0.8, 0.12))
-	draw_circle(SPAWN, 22, Color("9caba1"))
-	draw_circle(SPAWN, 16, Color("5ab7c2"))
-	draw_circle(SPAWN + Vector2(-3, -3), 7, Color("b4f1dc"))
+	_draw_village()
+
 	for monster in monsters:
 		if monster.hp <= 0:
 			continue
 		var pos: Vector2 = monster.pos
 		draw_ellipse_shadow(pos)
-		draw_circle(pos, 17, Color("85b75b"))
-		draw_circle(pos + Vector2(-4, -5), 9, Color("b0d17b"))
+		draw_circle(pos, 17, Color("74b540"))
+		draw_circle(pos + Vector2(-4, -5), 9, Color("c7ec76"))
 		draw_rect(Rect2(pos + Vector2(-7, -2), Vector2(3, 4)), Color("22342b"))
 		draw_rect(Rect2(pos + Vector2(4, -2), Vector2(3, 4)), Color("22342b"))
 		_health_bar(pos + Vector2(-20, -29), float(monster.hp) / 40, Color("b7d77e"))
@@ -336,17 +251,82 @@ func _draw() -> void:
 		draw_rect(Rect2(pos + Vector2(-9, -23), Vector2(18, 6)), Color("384454"))
 		draw_line(pos + Vector2(15, 12), pos + Vector2(20, -13), Color("d5e5e5"), 4)
 		_health_bar(pos + Vector2(-20, -36), float(p.hp) / 100, Color("79c7ba"))
-	for pos in [Vector2(40, 644), Vector2(104, 582), Vector2(104, 644), Vector2(168, 644)]:
-		draw_style_box(_pad_style(), Rect2(pos, Vector2(56, 56)))
-	draw_style_box(_pad_style(), Rect2(988, 594, 108, 108))
+		var caption := "Guardião" if local else "Viajante %s" % str(id).right(3)
+		_world_text(caption, pos + Vector2(-32, -44), Color("fff0ad"))
 
-func _pad_style() -> StyleBoxFlat:
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color("263e46")
-	style.border_color = Color("60767b")
-	style.set_border_width_all(2)
-	style.set_corner_radius_all(8)
-	return style
+func _draw_village() -> void:
+	draw_rect(Rect2(0, 0, 1152, 636), Color("89ad4b"))
+	for y in range(8, 632, 16):
+		for x in range(8, 1152, 16):
+			var n := (x * 17 + y * 31) % 23
+			if n < 10:
+				draw_rect(Rect2(x, y, 7, 3), Color("9cbb55") if n < 5 else Color("7b9e43"))
+	# A stone promenade crosses the village.
+	for y in range(112, 604, 30):
+		for x in range(250, 370, 30):
+			_stone(Vector2(x, y), Vector2(28, 28))
+	for y in range(310, 370, 30):
+		for x in range(130, 1130, 30):
+			_stone(Vector2(x, y), Vector2(28, 28))
+	# Water and banks are original procedural scenery.
+	draw_rect(Rect2(40, 140, 90, 410), Color("c8bc81"))
+	draw_rect(Rect2(48, 148, 74, 394), Color("3ca6b0"))
+	for y in range(154, 540, 20):
+		draw_rect(Rect2(52 + y % 27, y, 23, 3), Color("8ae1d1"))
+	for x in range(36, 136, 16):
+		draw_rect(Rect2(x, 310, 14, 60), Color("8d6742"))
+		draw_line(Vector2(x, 312), Vector2(x + 12, 312), Color("cfac6a"), 3)
+	_draw_house(Vector2(395, 180))
+	for pos in [Vector2(176, 215), Vector2(170, 488), Vector2(1020, 204), Vector2(1040, 510), Vector2(465, 520), Vector2(900, 530)]:
+		_draw_tree(pos)
+	for pos in [Vector2(205, 420), Vector2(530, 170), Vector2(950, 410), Vector2(780, 560)]:
+		draw_rect(Rect2(pos, Vector2(14, 9)), Color("9b987b"))
+		draw_rect(Rect2(pos + Vector2(2, -4), Vector2(9, 5)), Color("ddd5aa"))
+	for pos in [Vector2(220, 260), Vector2(420, 430), Vector2(955, 225), Vector2(560, 495), Vector2(810, 160)]:
+		for i in range(4):
+			var f: Vector2 = pos + Vector2(i * 7, (i % 2) * 8)
+			draw_rect(Rect2(f, Vector2(3, 8)), Color("536c35"))
+			draw_rect(Rect2(f + Vector2(-2, -2), Vector2(7, 4)), Color("f4dfa0") if i % 2 == 0 else Color("d68a9a"))
+	draw_circle(SPAWN + Vector2(0, 10), 36, Color("6c7a66"))
+	draw_circle(SPAWN, 31, Color("d6cc9d"))
+	draw_circle(SPAWN, 24, Color("419caa"))
+	draw_circle(SPAWN + Vector2(-4, -4), 17, Color("80d9cf"))
+	draw_rect(Rect2(SPAWN + Vector2(-6, -20), Vector2(12, 24)), Color("e7dfb6"))
+	_world_text("Fonte da Aurora", SPAWN + Vector2(-55, -70), Color("fff3bd"))
+	_world_text("Bosque dos limos", Vector2(720, 120), Color("f3edbc"))
+
+func _stone(pos: Vector2, dimensions: Vector2) -> void:
+	draw_rect(Rect2(pos, dimensions), Color("9d9b80"))
+	draw_rect(Rect2(pos, dimensions - Vector2(2, 3)), Color("d0c8a4"))
+	draw_line(pos + Vector2(2, 2), pos + Vector2(dimensions.x - 3, 2), Color("e6dfbf"), 2)
+
+func _draw_tree(pos: Vector2) -> void:
+	draw_rect(Rect2(pos + Vector2(-23, 5), Vector2(52, 16)), Color(0.16, 0.24, 0.13, 0.25))
+	draw_rect(Rect2(pos + Vector2(-7, -12), Vector2(14, 33)), Color("725134"))
+	draw_rect(Rect2(pos + Vector2(-4, -12), Vector2(4, 30)), Color("aa8150"))
+	for piece in [Rect2(-33, -45, 60, 25), Rect2(-24, -62, 47, 22), Rect2(-39, -35, 75, 18)]:
+		draw_rect(Rect2(piece.position + pos + Vector2(3, 5), piece.size), Color("4a6935"))
+		draw_rect(Rect2(piece.position + pos, piece.size), Color("b4bd52"))
+		draw_rect(Rect2(piece.position + pos, Vector2(piece.size.x - 8, 7)), Color("d3d878"))
+
+func _draw_house(pos: Vector2) -> void:
+	draw_rect(Rect2(pos + Vector2(-5, 18), Vector2(138, 78)), Color("7e7953"))
+	draw_rect(Rect2(pos, Vector2(125, 85)), Color("dac48a"))
+	for y in range(0, 80, 16):
+		draw_line(pos + Vector2(0, y), pos + Vector2(125, y), Color("b39b6a"), 2)
+	draw_rect(Rect2(pos + Vector2(42, 34), Vector2(35, 51)), Color("554b3b"))
+	draw_rect(Rect2(pos + Vector2(47, 39), Vector2(24, 46)), Color("303e37"))
+	for x in [12, 90]:
+		draw_rect(Rect2(pos + Vector2(x, 27), Vector2(22, 24)), Color("675741"))
+		draw_rect(Rect2(pos + Vector2(x + 3, 30), Vector2(16, 16)), Color("6cbbc0"))
+	for row in range(5):
+		draw_rect(Rect2(pos + Vector2(-10 + row * 8, -row * 10), Vector2(145 - row * 16, 12)), Color("a9634a") if row % 2 == 0 else Color("c78355"))
+	_world_text("Casa dos viajantes", pos + Vector2(-4, -58), Color("fff0b1"))
+
+func _world_text(text: String, pos: Vector2, color: Color) -> void:
+	var font := ThemeDB.fallback_font
+	draw_string_outline(font, pos, text, HORIZONTAL_ALIGNMENT_LEFT, -1, 14, 4, Color("293a2c"))
+	draw_string(font, pos, text, HORIZONTAL_ALIGNMENT_LEFT, -1, 14, color)
 
 func draw_ellipse_shadow(pos: Vector2) -> void:
 	draw_set_transform(pos + Vector2(0, 16), 0, Vector2(1, 0.35))

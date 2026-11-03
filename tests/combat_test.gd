@@ -13,7 +13,7 @@ func _run() -> void:
 	assert(p.pos.x > 300, "Movement must advance the player")
 	p.pos = Vector2(1087, 340)
 	world._simulate(1.0)
-	assert(p.pos.x <= 1088, "Movement must remain inside the arena")
+	assert(p.pos.x <= world.ARENA.end.x - 16, "Movement must remain inside the arena")
 	p.pos = world.monsters[0].pos
 	world.commands[1] = {"direction": Vector2.ZERO, "attack": true}
 	world._simulate(0.01)
