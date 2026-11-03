@@ -36,6 +36,11 @@ static func build(h: Control,key: String) -> Panel:
 			h.class_feedback = panel.get_node("Feedback")
 		"menu":
 			h.guide_panel = panel
+			panel.get_node("Save").pressed.connect(func():h.world.solo.save_now())
+			panel.get_node("NewAdventure").pressed.connect(func():
+				if h.world.solo.is_solo():
+					panel.get_node("NewConfirmation").popup_centered())
+			panel.get_node("NewConfirmation").confirmed.connect(func():h.world.solo.new_adventure())
 			panel.get_node("Resume").pressed.connect(h.close_modals)
 			panel.get_node("Story").pressed.connect(h.open_story)
 			panel.get_node("Character").pressed.connect(h.toggle_character)
@@ -65,6 +70,7 @@ static func build(h: Control,key: String) -> Panel:
 					h.world.equip_item(Realm.ITEMS[h.selected_item].slot,h.selected_item))
 		"network":
 			h.network_panel = panel
+			panel.get_node("ReturnSolo").pressed.connect(h.world.return_to_solo)
 			h.address = panel.get_node("Address")
 			h.host_button = panel.get_node("Host")
 			h.join_button = panel.get_node("Join")

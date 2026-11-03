@@ -202,7 +202,7 @@ layout_mode = 0
 offset_left = 350.0
 offset_top = 210.0
 offset_right = 802.0
-offset_bottom = 455.0
+offset_bottom = 505.0
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_y8iog")
 
@@ -296,3 +296,18 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_vd6xs")
 theme_override_styles/hover = SubResource("StyleBoxFlat_rmmny")
 theme_override_styles/disabled = SubResource("StyleBoxFlat_akrb3")
 text = "×"
+
+[node name="ReturnSolo" type="Button" parent="."]
+layout_mode = 0
+offset_left = 22.0
+offset_top = 240.0
+offset_right = 426.0
+offset_bottom = 278.0
+focus_mode = 0
+theme_override_colors/font_color = Color(1, 0.9019608, 0.6745098, 1)
+theme_override_colors/font_disabled_color = Color(0.57254905, 0.5803922, 0.49803922, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_f1g2i")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_vfuvr")
+theme_override_styles/hover = SubResource("StyleBoxFlat_t3saa")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_ej3t3")
+text = "VOLTAR À AVENTURA SOLO"

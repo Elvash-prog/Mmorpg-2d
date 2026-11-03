@@ -15,6 +15,7 @@ checks = [
     ("tests/ui_test.gd", "UI_PASS"),
     ("tests/realms_test.gd", "REALMS_PASS"),
     ("tests/architecture_test.gd", "ARCHITECTURE_PASS"),
+    ("tests/persistence_test.gd", "PERSISTENCE_PASS"),
 ]
 for script, marker in checks:
     try:
@@ -35,4 +36,4 @@ if "--network" in sys.argv:
     run = subprocess.run([sys.executable, str(ROOT / "tests/network_smoke.py")])
     if run.returncode:
         raise SystemExit(run.returncode)
-print("CHECKS_PASS: content, gameplay, interface, realms and architecture" + (", network" if "--network" in sys.argv else ""))
+print("CHECKS_PASS: content, gameplay, interface, realms, architecture and persistence" + (", network" if "--network" in sys.argv else ""))

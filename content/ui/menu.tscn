@@ -298,9 +298,9 @@ shadow_size = 10
 visible = false
 layout_mode = 0
 offset_left = 240.0
-offset_top = 130.0
+offset_top = 100.0
 offset_right = 912.0
-offset_bottom = 590.0
+offset_bottom = 620.0
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_ife83")
 
@@ -418,9 +418,9 @@ text = "PARTIDA EM REDE"
 [node name="@Label@77" type="Label" parent="." unique_id=1554114467]
 layout_mode = 0
 offset_left = 28.0
-offset_top = 322.0
+offset_top = 365.0
 offset_right = 28.0
-offset_bottom = 322.0
+offset_bottom = 365.0
 theme_override_colors/font_color = Color(0.73333335, 0.8039216, 0.8156863, 1)
 theme_override_colors/font_outline_color = Color(0.09411765, 0.12941177, 0.11372549, 1)
 theme_override_constants/outline_size = 3
@@ -429,4 +429,45 @@ text = "WASD / setas · mover      TAB / clique · alvo      1–5 · habilidade
 F · interagir / viajar      C · personagem      J · diário      Esc · fechar
 
 Explore os portais, abra baús e equipe os tesouros fora de combate.
-Progresso de sessão: ainda sem salvamento permanente."
+Solo: salvamento local automático a cada 5 segundos."
+
+[node name="Save" type="Button" parent="."]
+layout_mode = 0
+offset_left = 28.0
+offset_top = 310.0
+offset_right = 330.0
+offset_bottom = 348.0
+focus_mode = 0
+theme_override_colors/font_color = Color(1, 0.9019608, 0.6745098, 1)
+theme_override_colors/font_disabled_color = Color(0.57254905, 0.5803922, 0.49803922, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_xg0cv")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_hhyx6")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ds1xm")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_l8srf")
+text = "SALVAR AVENTURA"
+
+
+[node name="NewAdventure" type="Button" parent="."]
+layout_mode = 0
+offset_left = 342.0
+offset_top = 310.0
+offset_right = 644.0
+offset_bottom = 348.0
+focus_mode = 0
+theme_override_colors/font_color = Color(1, 0.9019608, 0.6745098, 1)
+theme_override_colors/font_disabled_color = Color(0.57254905, 0.5803922, 0.49803922, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_xg0cv")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_hhyx6")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ds1xm")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_l8srf")
+text = "NOVA AVENTURA"
+
+
+[node name="NewConfirmation" type="ConfirmationDialog" parent="."]
+title = "Iniciar nova aventura?"
+size = Vector2i(520, 180)
+dialog_text = "A aventura atual será arquivada neste dispositivo.
+Um personagem novo começará do zero.
+Os arquivos antigos ficam na pasta saves/archives."
+ok_button_text = "Arquivar e começar"
+cancel_button_text = "Continuar aventura atual"

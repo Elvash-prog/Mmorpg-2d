@@ -93,3 +93,9 @@ Esse formato não é SVP, não reproduz a rede do Warspear e não é um protocol
 `tests/run_checks.py --network` executa validação de conteúdo, gameplay, UI, regiões, arquitetura e dois peers reais. O runner preserva falhas e também rejeita logs de erro do Godot, pois alguns erros de script podem ocorrer mesmo quando o processo retorna zero.
 
 A sequência posterior pode evoluir a arte para um TileSet completo, retirar as interfaces de compatibilidade, separar mais painéis do HUD e preparar contas/servidor dedicado/banco. Nada disso é necessário para abrir e testar a entrega atual, e essas capacidades ainda não foram implementadas.
+
+## Persistência solo
+
+`scripts/persistence/solo_store.gd` serializa somente dados JSON validados com IDs estáveis do catálogo e dos objetos do mapa. Usa duas gerações com sequência e checksum, gravação temporária verificada, recuperação da geração válida e recusa de versões futuras ou mudanças concorrentes detectadas. Não é um banco multiplayer nem um bloqueio entre processos simultâneos.
+
+`solo_session.gd` coordena carregamento, autosave de 5 segundos, ações do menu, arquivamento e suspensão ao entrar em rede. Apenas a cena principal offline usa o perfil real. Testes usam caminhos temporários; servidor e cliente de smoke não leem o perfil. Encontros e estados transitórios não são persistidos; equipamentos e atributos são reconstruídos no acampamento.

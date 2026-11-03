@@ -12,6 +12,7 @@ const PORT := 24567
 const SPEED := 165.0
 static var ARENA: Rect2 = Map.BOUNDS
 static var SPAWN: Vector2 = Maps.objects("spawn")[0].pos
+var solo: RefCounted
 var transport: RefCounted
 var map_layers := Node2D.new()
 var combat: RefCounted
@@ -66,6 +67,7 @@ func _ready() -> void:
 		get_tree().quit(1)
 		set_process(false)
 		return
+	solo = preload("res://scripts/persistence/solo_session.gd").new(self)
 	transport = preload("res://scripts/network/session_transport.gd").new(self)
 	map_layers.name = "MapLayers"
 	add_child(map_layers)
@@ -96,6 +98,15 @@ func _ready() -> void:
 	elif "--server" in args:
 		smoke_host = "--smoke-host" in args
 		_host()
+	_update_labels()
+	call_deferred("_activate_solo_save")
+
+func _activate_solo_save() -> void:
+	var args := OS.get_cmdline_user_args()
+	if get_tree().current_scene != self or "--no-save" in args or "--server" in args or "--smoke-client" in args:
+		return
+	get_tree().auto_accept_quit = false
+	solo.start()
 	_update_labels()
 
 func _build_grid() -> void:
@@ -172,6 +183,7 @@ func _process(delta: float) -> void:
 	_update_labels()
 	visuals.queue_redraw()
 	_smoke_check(delta)
+	solo.tick(delta)
 
 func _unhandled_key_input(event: InputEvent) -> void:
 	if not event is InputEventKey or not event.pressed or event.echo or address.has_focus():
@@ -354,11 +366,14 @@ func _receive_state(packet: PackedByteArray) -> void:
 
 
 func _host() -> void:
+	if not solo.suspend():
+		return
 	_close_connection()
 	_reset_world()
 	var peer := ENetMultiplayerPeer.new()
 	var error := peer.create_server(PORT, 8)
 	if error != OK:
+		solo.resume()
 		status_label.text = "Não foi possível hospedar (erro %s)." % error
 		return
 	multiplayer.multiplayer_peer = peer
@@ -366,10 +381,13 @@ func _host() -> void:
 	print("SERVER_READY: UDP %s" % PORT)
 
 func _join() -> void:
+	if not solo.suspend():
+		return
 	_close_connection()
 	var peer := ENetMultiplayerPeer.new()
 	var error := peer.create_client(address.text.strip_edges(), PORT)
 	if error != OK:
+		solo.resume()
 		status_label.text = "Endereço inválido (erro %s)." % error
 		return
 	players.clear()
@@ -400,6 +418,7 @@ func _peer_disconnected(id: int) -> void:
 func _connection_failed() -> void:
 	_close_connection()
 	_reset_world()
+	solo.resume()
 	status_label.text = "Conexão falhou. Modo solo restaurado. Confira IP e UDP 24567."
 
 func _server_disconnected() -> void:
@@ -522,3 +541,20 @@ func reload_map_geometry() -> void:
 	Map.BLOCKERS = Maps.collision_rects(0)
 	Map.EXTRA_BLOCKERS = Maps.collision_rects(1)+Maps.collision_rects(2)
 	_build_grid()
+
+func return_to_solo() -> void:
+	if solo.is_solo():
+		hud.close_modals()
+		return
+	_close_connection()
+	_reset_world()
+	solo.resume()
+	hud.close_modals()
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_WM_CLOSE_REQUEST:
+		if solo != null:
+			solo.save_now(false)
+		get_tree().quit()
+	elif what == NOTIFICATION_APPLICATION_PAUSED and solo != null:
+		solo.save_now(false)

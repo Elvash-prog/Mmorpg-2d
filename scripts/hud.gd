@@ -90,7 +90,7 @@ func _ready() -> void:
 	quest_button.pressed.connect(toggle_journal)
 	_panel(self, Rect2(12, 536, 650, 86), Color(0.07, 0.10, 0.09, 0.88))
 	_label(self, "SISTEMA  ·  Vale da Aurora", Vector2(24, 543), 14, Color("edcf94"))
-	status_label = _label(self, "Modo solo • progresso temporário", Vector2(24, 566), 12, Color("d3dfcd"))
+	status_label = _label(self, "Modo solo • perfil local", Vector2(24, 566), 12, Color("d3dfcd"))
 	event_label = _label(self, "", Vector2(24, 590), 12, Color("b8d4c3"))
 	_panel(self, Rect2(0, 634, 1152, 86))
 	for item in [["MENU",12,80],["CLASSES",102,88],["DIÁRIO",200,88]]:
@@ -173,6 +173,8 @@ func toggle_journal() -> void:
 	_toggle(journal_panel)
 
 func close_modals() -> void:
+	if is_instance_valid(guide_panel):
+		guide_panel.get_node("NewConfirmation").hide()
 	for panel in [network_panel,guide_panel,class_panel,journal_panel,story_panel,character_panel]:
 		if is_instance_valid(panel):
 			panel.hide()
@@ -301,6 +303,9 @@ func refresh() -> void:
 	queue_redraw()
 
 func _process(delta: float) -> void:
+	if is_instance_valid(guide_panel):
+		guide_panel.get_node("Save").disabled = not world.solo.is_solo() or world.solo.read_only
+		guide_panel.get_node("NewAdventure").disabled = not world.solo.is_solo()
 	notice_elapsed = maxf(0, notice_elapsed - delta)
 	if is_instance_valid(notice):
 		notice.visible = notice_elapsed > 0

@@ -139,7 +139,7 @@ Além disso, inimigos dão XP e dois de ouro por abate. Jogadores vivos que cont
 
 Abra **REDE → Hospedar** em uma instância. Na outra, abra **REDE**, informe o IP do anfitrião e clique em **Conectar**. Duas janelas no mesmo computador usam `127.0.0.1`; em Wi-Fi, use o IP local do anfitrião. Libere **UDP 24567** no firewall do anfitrião. O host pode receber até oito convidados; o teste automatizado usa um host e um cliente.
 
-O servidor calcula colisões, projéteis, recursos, habilidades, dano e recompensas. Estado comprimido com cabeçalho próprio `AURA` v1 é enviado em um canal confiável separado; comandos de movimento usam mensagens não confiáveis com expiração. Esta é uma base de cooperação local, sem previsão de movimento, compensação de latência ou testes de carga. Cliente e servidor devem usar esta mesma versão, que substitui o snapshot sem cabeçalho das versões anteriores. Não há servidor público, contas, persistência ou criptografia. Conexão pela internet depende de um host acessível e configuração de rede.
+O servidor calcula colisões, projéteis, recursos, habilidades, dano e recompensas. Estado comprimido com cabeçalho próprio `AURA` v1 é enviado em um canal confiável separado; comandos de movimento usam mensagens não confiáveis com expiração. Esta é uma base de cooperação local, sem previsão de movimento, compensação de latência ou testes de carga. Cliente e servidor devem usar esta mesma versão, que substitui o snapshot sem cabeçalho das versões anteriores. Não há servidor público, contas, persistência em rede ou criptografia. Conexão pela internet depende de um host acessível e configuração de rede.
 
 ## Arte e animações
 
@@ -179,4 +179,14 @@ godot --path . -- --debug-collisions
 
 Ambientes restritos podem precisar de rede local autorizada e diretórios graváveis: `XDG_DATA_HOME=/tmp/aurora-data XDG_CONFIG_HOME=/tmp/aurora-config XDG_CACHE_HOME=/tmp/aurora-cache`. Processos devem ser reiniciados em uma nova tarefa.
 
-Este é um protótipo jogável em evolução, ainda sem contas, salvamento, progressão de níveis, áudio ou mundo persistente de MMORPG. O inventário e o progresso são mantidos apenas durante a sessão.
+Este é um protótipo jogável em evolução, ainda sem contas, progressão de níveis, áudio ou mundo persistente de MMORPG. O modo solo salva localmente; partidas em rede mantêm progresso apenas durante a sessão.
+
+### Salvamento solo local
+
+O jogo carrega automaticamente a aventura deste dispositivo. Salva alterações a cada 5 segundos, ao fechar pela janela, ao pausar no Android e antes de entrar em rede. O menu oferece **Salvar aventura** e **Nova aventura**, com confirmação e arquivamento do progresso anterior. **Voltar à aventura solo** no painel de rede recupera o perfil local.
+
+São preservados classe, XP, ouro, abates, inventário, equipamentos, missões, ervas coletadas, baús abertos e região. Ao carregar, o personagem volta com vida e energia completas ao acampamento da região; inimigos e encontros recomeçam. Atributos são recalculados a partir dos equipamentos atuais. Não há sincronização entre dispositivos nem salvamento das partidas em rede.
+
+Os arquivos ficam em `user://saves/` (Godot: **Projeto → Abrir pasta de dados do usuário**). `solo.json` e `solo.backup.json` alternam duas gerações; o carregamento escolhe a mais recente válida. Gravações usam arquivo temporário, validação e checksum. Um perfil ilegível ou de versão futura é preservado sem sobrescrita. Nova aventura copia os arquivos antigos para `saves/archives/` antes de começar. Para restaurar manualmente um arquivo arquivado, feche o jogo, copie os arquivos atuais para um local seguro, retire ambos da pasta ativa e copie a geração arquivada desejada como `solo.json`.
+
+`--no-save` desativa o salvamento local para sessões de desenvolvimento. Este armazenamento local não oferece proteção contra edição manual nem garantia contra falhas físicas do dispositivo.
