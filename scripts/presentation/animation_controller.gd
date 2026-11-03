@@ -66,6 +66,8 @@ static func validate(catalog: Resource) -> PackedStringArray:
 	if MANIFEST.schema_version!=1:
 		errors.append("Unsupported animation schema")
 	for profile in MANIFEST.heroes+MANIFEST.enemies:
+		if not profile.resource_path.begins_with("res://content/animations/") or "::" in profile.resource_path:
+			errors.append(String(profile.id)+": manifest must reference an editable profile file")
 		if ids.has(profile.id):
 			errors.append("Duplicate animation profile ID")
 		ids[profile.id] = true

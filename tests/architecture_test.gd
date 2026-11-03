@@ -13,6 +13,9 @@ func _run() -> void:
 	assert(Data.CATALOG.validate().is_empty())
 	assert(Data.CATALOG.entries.size()==47 and Data.CATALOG.records("skill").size()==15)
 	assert(Animator.validate(Data.CATALOG).is_empty() and Maps.validate().is_empty())
+	assert(Animator.MANIFEST.heroes[1].resource_path == "res://content/animations/hero_mage.tres","Animation manifest must reference the editable file, not a duplicate")
+	assert(Animator.MANIFEST.enemies[4].resource_path == "res://content/animations/enemy_boss_ruins.tres")
+	assert(Animator.MANIFEST.heroes[1] == load("res://content/animations/hero_mage.tres"))
 	assert(Data.CATALOG.find(&"skill.mage.fireball").data.cost == 22)
 	assert(Data.CATALOG.find(&"quest.restore").data.requires == &"quest.boss_ruins")
 	# Invalid authoring must be rejected, including duplicate IDs and dangling refs.
