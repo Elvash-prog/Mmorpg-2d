@@ -10,4 +10,14 @@ Direção de arte: personagem original de RPG em pixel art, cabelo castanho, tú
 
 Direção de arte: vila original vista de cima em pixel art, gramado vivo, água turquesa, caminhos antigos de pedra, chalé de telhado laranja, vegetação e flores nas bordas. Riacho na margem esquerda e clareira livre à direita para os combates. Praça vazia perto de 26% da largura e 50% da altura, onde o jogo desenha a fonte funcional. Sem personagens, inimigos, interface ou texto incorporados à imagem.
 
-O mapa é um fundo estático ilustrado. Não há tiles individuais, camadas de oclusão, interiores ou colisões de cenário nesta entrega. O personagem ainda pode andar sobre elementos decorativos; a arena limita somente as bordas externas. O ataque mantém um efeito desenhado por código e os limos mantêm a arte geométrica anterior. APK e desempenho em aparelhos Android reais não foram validados.
+## Ações de classe (`class_actions.png`)
+
+Folha com quatro colunas e três linhas: guerreiro, maga e patrulheira. Cada linha representa repouso, preparação, golpe/conjuração e recuperação. Gerada por IA com personagens originais e fundo transparente. O guerreiro usa a folha anterior para caminhar em quatro direções. Maga e patrulheira têm pose própria, espelhamento horizontal e oscilação de caminhada; ainda precisam de folhas completas em quatro direções.
+
+## Inimigos (`enemies.png`)
+
+Folha de quatro colunas e três linhas: limo de cristais, lobo cinzento e golem de pedra com musgo. As poses representam repouso, movimento, preparação e impacto. A primeira geração apresentou resíduos no fundo; a ferramenta de imagens foi usada novamente para limpar a transparência, preservando a composição. O arquivo integrado é a versão limpa.
+
+O mapa permanece um fundo ilustrado, agora com máscaras de colisão alinhadas à casa, rio, rochas e massas de árvores. A ponte é transitável. As máscaras definidas em `scripts/map_rules.gd` são aproximações das áreas sólidas; não são recortes por pixel. Não há tiles individuais, interiores ou oclusão por camadas.
+
+Efeitos de corte, partículas, números, projéteis, áreas de aviso, escudos e cura são desenhados pelo Godot sobre as folhas, conforme o estado autoritativo do servidor. O NPC Lia e os itens interativos ainda usam desenhos simples por código. APK e desempenho em aparelhos Android reais ainda não foram validados.

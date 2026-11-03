@@ -1,53 +1,101 @@
 # Aurora — Fronteira Viva
 
-Primeiro protótipo de um RPG 2D para PC e Android, inspirado no gênero dos MMORPGs clássicos, com mundo e visual próprios. O guardião e o fundo da vila usam arte gerada por IA para este projeto; nenhum recurso do Warspear é usado. O guardião tem caminhada em quatro direções; os limos e efeitos ainda usam desenhos simples por código.
+Protótipo de RPG 2D cooperativo para PC e Android no Godot 4.6.3 padrão. Mundo e artes próprios; personagens, inimigos e fundo da vila foram gerados com IA. Não usa recursos extraídos do Warspear Online.
 
-## Jogar no computador
+![Interface do jogo](docs/interface-pc.png)
 
-1. Instale o **Godot 4.6.3 padrão** (não precisa da versão .NET).
-2. No Godot, clique em **Importar** e selecione `project.godot` desta pasta.
-3. Aperte **F6** com a cena `scenes/world.tscn` aberta, ou **F5** para iniciar o projeto.
-4. Mova com **WASD ou setas** e ataque segurando **Espaço**, **1** ou o primeiro botão da barra de habilidades. A fonte recupera sua vida. Derrote cinco limos para completar a missão.
+## Abrir e jogar
 
-Os botões direcionais e de ataque também aceitam toque simultâneo. Os controles do jogo usam teclas físicas, sem capturar o texto digitado no campo de IP.
+1. Instale o **Godot 4.6.3 padrão** (sem .NET).
+2. No gerenciador de projetos, clique em **Importar** e selecione `project.godot`.
+3. Aperte **F5** para iniciar. O jogo começa em modo solo junto à fonte.
+4. Abra **CLASSES** para escolher guerreiro, maga ou patrulheira. É necessário estar perto da fonte e fora de combate.
+5. Clique em um inimigo ou use **TAB**. Aproxime-se até o alcance da habilidade e ataque.
 
-## Jogar com outra pessoa
+| Ação | PC | Toque |
+| --- | --- | --- |
+| Mover | WASD / setas | Direcional na tela |
+| Selecionar inimigo | Clique / TAB | Toque no inimigo / ALVO |
+| Ataque básico | Segurar Espaço / 1 | Segurar botão 1 |
+| Habilidades | 2, 3, 4, 5 | Botões 2–5 |
+| Interagir / coletar / entregar | F | USAR |
+| Diário de missões | J / DIÁRIO | DIÁRIO |
+| Trocar de classe | CLASSES junto à fonte | CLASSES junto à fonte |
+| Fechar painel | Escape / × | × |
 
-Abra **REDE**, no canto inferior direito, e clique em **Hospedar**. Na outra instância, abra **REDE**, informe o IP do computador anfitrião e clique em **Conectar**. Para testar duas janelas no mesmo PC, use `127.0.0.1`. Em uma rede Wi-Fi, use o IP local do anfitrião. Autorize **UDP 24567** no firewall do anfitrião. O servidor calcula movimento, combate, vida e experiência; clientes enviam comandos.
+As barras mostram vida (vermelho), energia (azul) e experiência (dourado). Cada habilidade tem seu custo e sua recarga; o nome completo, os valores e a descrição aparecem na dica do botão. Nomes abreviados na barra evitam sobreposição. A fonte restaura vida e energia. Ao morrer, você retorna à fonte em três segundos e mantém o progresso da sessão.
 
-Esta versão é um teste em rede local para até oito convidados. Conexão pela internet exige servidor acessível e configuração de rede. Não há contas, salvamento, servidor público, criptografia ou proteção completa contra abuso. O progresso é temporário e reinicia ao trocar de sessão. O mundo tem tamanho fixo e os jogadores são distinguidos por cor e contorno.
+## Classes e cinco habilidades por classe
 
-## Interface
+Todas as quinze habilidades estão disponíveis desde o início, com execução e validação pelo servidor.
 
-A interface usa painéis escuros com bordas douradas, vida e experiência no canto superior esquerdo, um minimapa com posições reais à direita, objetivo da missão, mensagens locais do sistema e barra inferior. O primeiro espaço executa o ataque; os espaços 2–5 estão explicitamente bloqueados e reservados. **MENU** abre o guia; **REDE** abre as opções de multiplayer. A barra azul representa experiência, não mana. O cenário usa um fundo estático gerado por IA; casas, água e árvores são decorativas, sem colisões nesta versão.
+| Classe | 1 | 2 | 3 | 4 | 5 |
+| --- | --- | --- | --- | --- | --- |
+| Guerreiro | Corte: alvo próximo | Redemoinho: dano ao redor | Investida: avanço e golpe | Muralha: escudo | Fôlego: cura |
+| Maga | Faísca: projétil arcano | Bola de fogo: explosão | Nova de gelo: dano e lentidão | Barreira: escudo | Tempestade: quatro pulsos em área |
+| Patrulheira | Flecha: projétil rápido | Tiro duplo: duas flechas | Chuva: três ondas em área | Armadilha: dano e imobilização | Passo evasivo: recuo e esquiva |
 
-![Interface no PC](docs/interface-pc.png)
+O guerreiro tem 140 de vida / 80 de energia; a maga, 90 / 120; a patrulheira, 110 / 90. A energia regenera lentamente, mais rápido perto da fonte. Escudos duram até cinco segundos ou até serem consumidos. Trocar de classe mantém missões e recompensas, mas limpa habilidades e efeitos anteriores.
 
-No modo de toque, um direcional aparece sobre o mapa e aceita movimento e ataque simultâneos. Para conferir esse layout no PC, execute `godot --path . -- --touch-ui`. A proporção da tela é preservada para evitar cortes; aparelhos mais largos podem mostrar barras laterais. O toque ainda precisa ser validado em um aparelho Android real.
+Ataques básicos procuram o inimigo mais próximo ao alcance quando nenhum alvo vivo está selecionado. Com um alvo selecionado, você precisa respeitar o alcance. O servidor rejeita habilidades sem energia, em recarga ou com a linha de visão bloqueada. Projéteis percorrem o cenário e colidem com paredes e inimigos; ataques básicos de corpo a corpo atingem um alvo, habilidades de área atingem vários.
 
-## Arte gerada por IA
+## Colisões e inimigos
 
-`assets/guardian.png` é uma folha com 16 quadros (4 colunas × 4 linhas): sul, oeste, leste e norte. Cada linha contém repouso e passos alternados. O jogo recorta as regiões na renderização, seleciona a direção a partir do movimento e usa o primeiro quadro ao parar. O ataque usa o efeito de arco sobre o personagem; não há ainda uma animação corporal de ataque dedicada.
+Rio, casa, rochas e massas principais de árvores têm máscaras de colisão ajustadas sobre a imagem do cenário. A ponte fica livre. Movimento, recuos e investidas usam subpassos para impedir atravessar paredes. Os inimigos também respeitam essas máscaras e usam caminhos em uma grade para contornar obstáculos. A fonte é uma área de cura acessível, não uma barreira.
 
-`assets/village.png` é um fundo de mapa contínuo, não um TileSet editável. A fonte funcional é desenhada sobre a praça e o minimapa usa uma região da mesma imagem. A folha original é preservada sem recortes destrutivos. As artes ainda podem precisar de ajustes de alinhamento e uniformidade entre quadros. Veja [notas de geração](assets/ART.md).
+Há três limos, dois lobos e uma sentinela de pedra. Cada espécie tem aparência, vida, velocidade, força e animação próprias. **Áreas vermelhas indicam onde o golpe vai cair**: saia delas antes do fim da preparação. O lobo é mais rápido e a sentinela tem um golpe maior e mais lento. Inimigos derrotados reaparecem após oito segundos. Não atacam dentro da zona segura da fonte.
+
+## Cinco missões
+
+As missões já começam no diário. **Lia**, perto da fonte, recebe as entregas com **F / USAR**. Cada missão concede XP e ouro uma única vez por jogador na sessão.
+
+| Missão | Objetivo | Recompensa |
+| --- | --- | --- |
+| Primeiros passos | Derrotar 3 limos | 70 XP + 30 ouro |
+| Uivos no vale | Derrotar 2 lobos | 100 XP + 50 ouro |
+| Pedra desperta | Derrotar 1 sentinela | 150 XP + 75 ouro |
+| Ervas do curandeiro | Coletar as 3 ervas luminosas | 75 XP + 40 ouro |
+| Explorador do vale | Visitar o marco azul a sudeste | 50 XP + 25 ouro |
+
+Além disso, inimigos dão XP e dois de ouro por abate. Ervas e progresso são individuais; dois jogadores podem cumprir a mesma missão. O ouro ainda é apenas uma recompensa acumulada: não há loja ou equipamentos compráveis.
+
+## Multiplayer local
+
+Abra **REDE → Hospedar** em uma instância. Na outra, abra **REDE**, informe o IP do anfitrião e clique em **Conectar**. Duas janelas no mesmo computador usam `127.0.0.1`; em Wi-Fi, use o IP local do anfitrião. Libere **UDP 24567** no firewall do anfitrião. O host pode receber até oito convidados; o teste automatizado usa um host e um cliente.
+
+O servidor calcula colisões, projéteis, recursos, habilidades, dano e recompensas. Estado comprimido é enviado em um canal confiável separado; comandos de movimento usam mensagens não confiáveis com expiração. Esta é uma base de cooperação local, sem previsão de movimento, compensação de latência ou testes de carga. Não há servidor público, contas, persistência ou criptografia. Conexão pela internet depende de um host acessível e configuração de rede.
+
+## Arte e animações
+
+As folhas `assets/class_actions.png` e `assets/enemies.png` contêm poses de preparação, ataque e recuperação. Ataques têm efeitos de corte, gelo, fogo, raio, flechas, escudo, cura e números de dano. A caminhada do guerreiro tem quatro direções; maga e patrulheira usam pose própria com espelhamento e oscilação ao andar, ainda sem folhas completas de caminhada em quatro direções. Efeitos são desenhados pelo Godot e replicados pelo servidor.
+
+O mapa continua sendo uma imagem de fundo, agora com colisões lógicas. Não há TileSet editável, interiores ou oclusão por camadas. As máscaras são aproximações de áreas sólidas, não recortes de cada pixel das árvores. Consulte [as notas da arte](assets/ART.md).
+
+[Prévia do guerreiro](docs/class-warrior.png) · [Maga](docs/class-mage.png) · [Patrulheira](docs/class-ranger.png) · [Diário](docs/journal.png) · [Modo toque](docs/interface-touch.png)
 
 ## Android
 
-O projeto usa renderização Compatibility, orientação horizontal e controles de toque. Para gerar APK no seu computador, instale os templates de exportação correspondentes ao Godot 4.6.3 e configure o SDK Android e Java 17 conforme a documentação oficial do Godot. Em **Projeto → Exportar**, adicione Android e habilite a permissão **Internet** para o multiplayer. Exporte um APK de depuração e instale em um aparelho de teste. APK e execução em aparelho ainda não foram validados neste ambiente.
+O projeto usa renderização Compatibility, orientação horizontal e controles simultâneos de movimento e habilidades. Para conferir a interface no PC: `godot --path . -- --touch-ui`. A proporção é preservada; telas largas podem mostrar barras laterais.
 
-## Desenvolvimento e validação
+Para exportar APK, instale os templates correspondentes ao Godot 4.6.3 e configure Java 17 e SDK Android conforme a documentação oficial do Godot. Adicione um preset Android em **Projeto → Exportar** e habilite a permissão **Internet**. APK, controles físicos em aparelho e desempenho Android **ainda não foram validados** nesta entrega.
+
+## Desenvolvimento e testes
 
 ```sh
-# Na primeira execução após clonar, importe as texturas:
+# Importe as texturas na primeira execução após clonar:
 godot --headless --editor --import --path . --quit
 godot --path .
 godot --headless --path . --script tests/combat_test.gd
 godot --headless --path . --script tests/ui_test.gd
+python3 tests/network_smoke.py
+# Servidor local, quando necessário:
 godot --headless --path . -- --server
+# Visualizar as máscaras de colisão:
+godot --path . -- --debug-collisions
 ```
 
-Teste de rede automatizado: inicie `godot --headless --path . -- --server --smoke-host`; em outro terminal, execute `godot --headless --path . -- --smoke-client`. O cliente deve imprimir `NETWORK_CLIENT_PASS` e encerrar com código 0; o servidor imprime `NETWORK_HOST_PASS` ao receber ataque remoto. Encerre o servidor após o teste.
+`COMBAT_PASS` valida as quinze habilidades, custo/recarga, colisões, ponte, projéteis, linha de visão, desvios de ataques, caminhos, missões, recompensas únicas, morte e troca de classe. `UI_PASS` valida controles, conteúdo das três classes e cinco missões, transparência, animação, barras e seleção de alvo. `NETWORK_PASS` inicia processos ENet reais, testa movimento, mudança de classe e habilidade especial replicadas e encerra apenas o servidor criado para o teste.
 
-Em ambientes restritos, use diretórios XDG graváveis para os dados locais do Godot, por exemplo `XDG_DATA_HOME=/tmp/aurora-data XDG_CONFIG_HOME=/tmp/aurora-config XDG_CACHE_HOME=/tmp/aurora-cache`. A rede local pode exigir execução fora do sandbox.
+Ambientes restritos podem precisar de rede local autorizada e diretórios graváveis: `XDG_DATA_HOME=/tmp/aurora-data XDG_CONFIG_HOME=/tmp/aurora-config XDG_CACHE_HOME=/tmp/aurora-cache`. Processos devem ser reiniciados em uma nova tarefa.
 
-Próximas etapas: validar o combate com jogadores, melhorar a arte e o mapa, adicionar classes e inventário e planejar persistência e um servidor dedicado. Este protótipo ainda não é um MMORPG completo.
+Este é um protótipo jogável em evolução, ainda sem contas, salvamento, inventário, progressão de níveis, áudio ou mundo persistente de MMORPG.

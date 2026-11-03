@@ -1,33 +1,46 @@
 extends Node2D
-## Small server-authoritative arena with AI-generated art and local animation.
-
+## Authoritative co-op RPG prototype. The server owns every gameplay outcome.
+const Data = preload("res://scripts/game_data.gd")
+const Map = preload("res://scripts/map_rules.gd")
 const HERO_SHEET = preload("res://assets/guardian.png")
 const MAP_TEXTURE = preload("res://assets/village.png")
 const PORT := 24567
 const SPEED := 165.0
-const ARENA := Rect2(16, 112, 1120, 490)
+const ARENA := Map.BOUNDS
 const SPAWN := Vector2(300, 318)
-var animations: Dictionary = {}
 var players: Dictionary = {}
 var monsters: Array[Dictionary] = []
 var commands: Dictionary = {}
+var animations: Dictionary = {}
+var projectiles: Array[Dictionary] = []
+var zones: Array[Dictionary] = []
+var effects: Array[Dictionary] = []
+var grid := AStarGrid2D.new()
+var clock := 0.0
+var send_elapsed := 0.0
+var connection_elapsed := 0.0
 var touch_direction := Vector2.ZERO
 var touch_attack := false
-var send_elapsed := 0.0
-var attack_flash := 0.0
-var connection_elapsed := 0.0
+var desired_target := -1
 var status_label: Label
 var stats_label: Label
 var address: LineEdit
 var host_button: Button
 var join_button: Button
 var hud: Control
+var visuals: Node2D
 var smoke_client := false
 var smoke_host := false
 var smoke_elapsed := 0.0
 var smoke_attack_received := false
+var smoke_special_received := false
+var smoke_special_sent := false
 
 func _ready() -> void:
+	_build_grid()
+	visuals = preload("res://scripts/combat_view.gd").new()
+	visuals.world = self
+	add_child(visuals)
 	_build_ui()
 	multiplayer.peer_connected.connect(_peer_connected)
 	multiplayer.peer_disconnected.connect(_peer_disconnected)
@@ -44,124 +57,561 @@ func _ready() -> void:
 		_host()
 	_update_labels()
 
+func _build_grid() -> void:
+	grid.region = Rect2i(0, 0, 72, 40)
+	grid.cell_size = Vector2(16, 16)
+	grid.offset = Vector2(8, 8)
+	grid.diagonal_mode = AStarGrid2D.DIAGONAL_MODE_ONLY_IF_NO_OBSTACLES
+	grid.update()
+	for y in range(40):
+		for x in range(72):
+			grid.set_point_solid(Vector2i(x, y), Map.blocked(Vector2(x * 16 + 8, y * 16 + 8)))
+
 func _reset_world() -> void:
 	animations.clear()
 	players.clear()
 	commands.clear()
+	projectiles.clear()
+	zones.clear()
+	effects.clear()
+	desired_target = -1
 	players[1] = _new_player()
 	monsters.clear()
-	for i in range(5):
-		var pos := Vector2(620 + (i % 3) * 130, 240 + (i / 3) * 190)
-		monsters.append({"pos": pos, "home": pos, "hp": 40, "timer": 0.0, "cooldown": 0.0})
+	var homes := [Vector2(620, 235), Vector2(760, 245), Vector2(640, 415), Vector2(820, 365), Vector2(925, 435), Vector2(850, 535)]
+	for i in range(homes.size()):
+		var kind := 0 if i < 3 else (1 if i < 5 else 2)
+		var def: Dictionary = Data.ENEMIES[kind]
+		monsters.append({"pos":homes[i], "home":homes[i], "kind":kind, "hp":def.hp, "max_hp":def.hp, "timer":0.0, "cooldown":0.0, "windup":0.0, "attack_pos":homes[i], "slow":0.0, "root":0.0, "hit":0.0, "moving":false, "path":[], "path_timer":0.0})
 
-func _new_player() -> Dictionary:
-	return {"pos": SPAWN, "hp": 100, "xp": 0, "kills": 0, "cooldown": 0.0, "respawn": 0.0, "swing": 0.0}
+func _new_player(class_id := 0) -> Dictionary:
+	return {"pos":SPAWN, "hp":Data.CLASS_HP[class_id], "max_hp":Data.CLASS_HP[class_id], "mana":Data.CLASS_MANA[class_id], "max_mana":Data.CLASS_MANA[class_id], "class_id":class_id,
+		"xp":0, "gold":0, "kills":0, "cds":[0.0,0.0,0.0,0.0,0.0], "respawn":0.0, "swing":0.0, "last_skill":0, "cast":{}, "request":-1, "request_target":-1, "target":-1, "facing":Vector2.RIGHT,
+		"shield":0.0, "shield_time":0.0, "evade":0.0, "combat":0.0, "progress":{"slime":0,"wolf":0,"golem":0,"herbs":0,"visit":0}, "picked":[], "claimed":[],
+		"message":"Cinco missões recebidas. Fale com Lia usando F.", "message_time":0.0}
 
 func _process(delta: float) -> void:
 	var direction := _keyboard_direction() + touch_direction
 	var attack := Input.is_physical_key_pressed(KEY_SPACE) or Input.is_physical_key_pressed(KEY_1) or touch_attack
-	if address.has_focus():
-		direction = touch_direction
-		attack = touch_attack
+	if address.has_focus() or hud.modal_open():
+		direction = Vector2.ZERO
+		attack = false
 	if smoke_client:
 		direction = Vector2.RIGHT
 		attack = true
 	if _is_authority():
-		commands[1] = {"direction": direction.limit_length(), "attack": attack}
+		commands[1] = {"direction":direction.limit_length(), "attack":attack, "target":desired_target, "received":clock}
 		_simulate(delta)
 	else:
 		connection_elapsed += delta
 		if multiplayer.multiplayer_peer.get_connection_status() == MultiplayerPeer.CONNECTION_CONNECTED:
-			_submit_input.rpc_id(1, direction.limit_length(), attack)
+			_submit_input.rpc_id(1, direction.limit_length(), attack, desired_target)
 		elif connection_elapsed > 8.0:
 			_connection_failed()
 	send_elapsed += delta
-	if _is_authority() and multiplayer.has_multiplayer_peer() and send_elapsed >= 0.05:
+	if multiplayer.has_multiplayer_peer() and multiplayer.is_server() and send_elapsed >= 0.05:
 		send_elapsed = 0.0
-		_receive_state.rpc(players, monsters)
-	attack_flash = maxf(0.0, attack_flash - delta)
+		_receive_state.rpc(var_to_bytes([players, monsters, projectiles, zones, effects]).compress(FileAccess.COMPRESSION_DEFLATE))
 	_update_animation(delta)
 	_update_labels()
-	queue_redraw()
+	visuals.queue_redraw()
 	_smoke_check(delta)
 
+func _unhandled_key_input(event: InputEvent) -> void:
+	if not event is InputEventKey or not event.pressed or event.echo or address.has_focus():
+		return
+	if event.physical_keycode == KEY_ESCAPE:
+		hud.close_modals()
+	elif not hud.modal_open():
+		if event.physical_keycode >= KEY_2 and event.physical_keycode <= KEY_5:
+			use_skill(event.physical_keycode - KEY_1)
+		elif event.physical_keycode == KEY_TAB:
+			cycle_target()
+		elif event.physical_keycode == KEY_F:
+			interact()
+		elif event.physical_keycode == KEY_J:
+			hud.toggle_journal()
+
+func _unhandled_input(event: InputEvent) -> void:
+	if hud.modal_open():
+		return
+	var point := Vector2.ZERO
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		point = get_global_mouse_position()
+	elif event is InputEventScreenTouch and event.pressed:
+		point = get_canvas_transform().affine_inverse() * event.position
+	else:
+		return
+	var closest := 40.0
+	desired_target = -1
+	for i in range(monsters.size()):
+		var d: float = point.distance_to(monsters[i].pos - Vector2(0, 12))
+		if monsters[i].hp > 0 and d < closest:
+			closest = d
+			desired_target = i
+
 func _keyboard_direction() -> Vector2:
-	return Vector2(
-		float(Input.is_physical_key_pressed(KEY_D) or Input.is_physical_key_pressed(KEY_RIGHT)) - float(Input.is_physical_key_pressed(KEY_A) or Input.is_physical_key_pressed(KEY_LEFT)),
+	return Vector2(float(Input.is_physical_key_pressed(KEY_D) or Input.is_physical_key_pressed(KEY_RIGHT)) - float(Input.is_physical_key_pressed(KEY_A) or Input.is_physical_key_pressed(KEY_LEFT)),
 		float(Input.is_physical_key_pressed(KEY_S) or Input.is_physical_key_pressed(KEY_DOWN)) - float(Input.is_physical_key_pressed(KEY_W) or Input.is_physical_key_pressed(KEY_UP)))
 
 func _is_authority() -> bool:
-	return not multiplayer.has_multiplayer_peer() or multiplayer.is_server()
+	return multiplayer.is_server()
+
+func cycle_target() -> void:
+	var valid: Array[int] = []
+	var p: Dictionary = players.get(multiplayer.get_unique_id(), {})
+	if p.is_empty():
+		return
+	for i in range(monsters.size()):
+		if monsters[i].hp > 0 and p.pos.distance_to(monsters[i].pos) < 400:
+			valid.append(i)
+	if valid.is_empty():
+		desired_target = -1
+	else:
+		desired_target = valid[(valid.find(desired_target) + 1) % valid.size()]
+
+func use_skill(slot: int) -> void:
+	if hud.modal_open():
+		return
+	if _is_authority():
+		_queue_skill(1, slot, desired_target)
+	else:
+		_request_skill.rpc_id(1, slot, desired_target)
+
+func interact() -> void:
+	if _is_authority():
+		_interact(1)
+	else:
+		_request_interaction.rpc_id(1)
+
+func choose_class(class_id: int) -> void:
+	if _is_authority():
+		_set_class(1, class_id)
+	else:
+		_request_class.rpc_id(1, class_id)
+
+func _queue_skill(id: int, slot: int, target: int) -> void:
+	if players.has(id) and slot >= 0 and slot < 5 and target >= -1 and target < monsters.size():
+		players[id].request = slot
+		players[id].request_target = target
 
 func _simulate(delta: float) -> void:
+	clock += delta
+	for fx in effects:
+		fx.life -= delta
+	effects = effects.filter(func(fx): return fx.life > 0)
 	for id in players:
 		var p: Dictionary = players[id]
-		p.cooldown = maxf(0.0, p.cooldown - delta)
-		p.swing = maxf(0.0, p.swing - delta)
+		for i in range(5):
+			p.cds[i] = maxf(0, p.cds[i] - delta)
+		for timer in ["swing", "shield_time", "evade", "combat"]:
+			p[timer] = maxf(0, p[timer] - delta)
+		if p.shield_time <= 0:
+			p.shield = 0.0
 		if p.hp <= 0:
 			p.respawn -= delta
+			p.request = -1
+			p.cast = {}
 			if p.respawn <= 0:
-				p.hp = 100
+				p.hp = p.max_hp
+				p.mana = p.max_mana
 				p.pos = SPAWN
+				p.shield = 0.0
+				_message(p, "Você retornou à fonte. Seu progresso foi mantido.")
 			continue
-		var cmd: Dictionary = commands.get(id, {"direction": Vector2.ZERO, "attack": false})
-		p.pos += cmd.direction * SPEED * delta
-		p.pos = Vector2(clampf(p.pos.x, ARENA.position.x + 16, ARENA.end.x - 16), clampf(p.pos.y, ARENA.position.y + 16, ARENA.end.y - 16))
-		if cmd.attack and p.cooldown <= 0:
-			p.cooldown = 0.45
-			p.swing = 0.18
-			for monster in monsters:
-				if monster.hp > 0 and p.pos.distance_to(monster.pos) < 76:
-					monster.hp = maxi(0, monster.hp - 20)
-					if monster.hp == 0:
-						monster.timer = 5.0
-						p.xp += 25
-						p.kills += 1
-		# The village fountain restores health.
-		if p.pos.distance_to(SPAWN) < 65:
-			p.hp = minf(100.0, p.hp + delta * 12)
-	for monster in monsters:
-		if monster.hp <= 0:
-			monster.timer -= delta
-			if monster.timer <= 0:
-				monster.hp = 40
-				monster.pos = monster.home
-			continue
-		monster.cooldown = maxf(0.0, monster.cooldown - delta)
-		var target := -1
-		var distance := 210.0
-		for id in players:
-			var p: Dictionary = players[id]
-			var d: float = monster.pos.distance_to(p.pos)
-			if p.hp > 0 and d < distance and p.pos.distance_to(SPAWN) > 85:
-				target = id
-				distance = d
-		if target != -1:
-			var p: Dictionary = players[target]
-			if distance > 29:
-				monster.pos = monster.pos.move_toward(p.pos, delta * 65)
-			elif monster.cooldown <= 0:
-				p.hp = maxf(0.0, p.hp - 8)
-				monster.cooldown = 0.8
-				if p.hp <= 0:
-					p.respawn = 3.0
+		var cmd: Dictionary = commands.get(id, {"direction":Vector2.ZERO, "attack":false})
+		var direction: Vector2 = cmd.direction
+		if clock - cmd.get("received", clock) > 0.35:
+			direction = Vector2.ZERO
+			cmd = {"direction":Vector2.ZERO, "attack":false}
+		p.pos = Map.move_actor(p.pos, direction.limit_length() * SPEED * delta)
+		if direction.length() > 0.1:
+			p.facing = direction.normalized()
+		if cmd.has("target"):
+			p.target = cmd.target
+		p.mana = minf(p.max_mana, p.mana + delta * 4)
+		if p.pos.distance_to(SPAWN) < 64:
+			p.hp = minf(p.max_hp, p.hp + delta * 16)
+			p.mana = minf(p.max_mana, p.mana + delta * 15)
+		if p.pos.distance_to(Data.LANDMARK) < 48:
+			if p.progress.visit == 0:
+				_message(p, "Marco descoberto! Retorne a Lia para receber a recompensa.")
+			p.progress.visit = 1
+		if not p.cast.is_empty():
+			p.cast.time -= delta
+			if p.cast.time <= 0:
+				var cast: Dictionary = p.cast
+				p.cast = {}
+				_resolve_skill(id, cast)
 		else:
-			monster.pos = monster.pos.move_toward(monster.home, delta * 40)
+			var slot: int = p.request
+			if slot >= 0:
+				p.target = p.request_target
+			if slot < 0 and cmd.attack:
+				slot = 0
+			if slot >= 0:
+				_begin_skill(id, slot)
+			p.request = -1
+	_tick_projectiles(delta)
+	_tick_zones(delta)
+	for monster in monsters:
+		_tick_monster(monster, delta)
+
+func _select_target(p: Dictionary, reach: float) -> int:
+	var selected: int = p.target
+	if selected >= 0 and selected < monsters.size() and monsters[selected].hp > 0:
+		return selected
+	var nearest := reach + 1
+	var target := -1
+	for i in range(monsters.size()):
+		var d: float = p.pos.distance_to(monsters[i].pos)
+		if monsters[i].hp > 0 and d < nearest and Map.line_clear(p.pos, monsters[i].pos):
+			nearest = d
+			target = i
+	return target
+
+func _begin_skill(id: int, slot: int) -> bool:
+	var p: Dictionary = players[id]
+	if slot < 0 or slot >= 5 or p.hp <= 0 or not p.cast.is_empty() or p.cds[slot] > 0:
+		return false
+	var skill: Dictionary = Data.SKILLS[p.class_id][slot]
+	if p.mana < skill.cost:
+		_message(p, "Energia insuficiente para %s." % skill.name)
+		return false
+	var target := -1
+	if skill.kind in ["melee", "charge", "bolt", "fire", "arrow", "double", "storm", "rain", "trap"]:
+		target = _select_target(p, skill.range)
+		if target < 0:
+			_message(p, "Selecione um inimigo ao alcance (clique ou TAB).")
+			return false
+		if p.pos.distance_to(monsters[target].pos) > skill.range:
+			_message(p, "Alvo fora do alcance de %s." % skill.name)
+			return false
+		if not Map.line_clear(p.pos, monsters[target].pos):
+			_message(p, "O cenário bloqueia a linha de visão.")
+			return false
+		p.facing = p.pos.direction_to(monsters[target].pos)
+	p.target = target
+	p.mana -= skill.cost
+	p.cds[slot] = skill.cd
+	p.swing = 0.48
+	p.last_skill = slot
+	p.cast = {"slot":slot, "target":target, "time":0.15}
+	return true
+
+func _resolve_skill(id: int, cast: Dictionary) -> void:
+	var p: Dictionary = players[id]
+	var skill: Dictionary = Data.SKILLS[p.class_id][cast.slot]
+	var target: int = cast.target
+	var center: Vector2 = monsters[target].pos if target >= 0 and target < monsters.size() else p.pos
+	var color: Color = Data.CLASS_COLORS[p.class_id]
+	if skill.kind == "shield":
+		p.shield = float(skill.power)
+		p.shield_time = 5.0
+		_fx("shield", p.pos, p.pos, 50, color)
+	elif skill.kind == "heal":
+		var amount: float = minf(skill.power, p.max_hp - p.hp)
+		p.hp += amount
+		_fx("heal", p.pos, p.pos, 55, Color("86efad"))
+		_number(p.pos, "+%s" % int(amount), Color("9af1b2"))
+	elif skill.kind == "evade":
+		p.pos = Map.move_actor(p.pos, -p.facing * 155)
+		p.evade = 1.2
+		_fx("evade", p.pos, p.pos, 45, color)
+	elif skill.kind == "whirl" or skill.kind == "frost":
+		_area_damage(id, p.pos, skill.range, skill.power, "slow" if skill.kind == "frost" else "")
+		_fx(skill.kind, p.pos, p.pos, skill.range, Color("9ee9ff") if skill.kind == "frost" else color)
+	elif skill.kind in ["storm", "rain", "trap"]:
+		if target >= 0 and Map.line_clear(p.pos, center) and p.pos.distance_to(center) <= skill.range + 12:
+			zones.append({"kind":skill.kind, "pos":center, "owner":id, "life":8.0 if skill.kind == "trap" else 3.4, "tick":0.0, "pulses":1 if skill.kind == "trap" else (4 if skill.kind == "storm" else 3), "radius":42.0 if skill.kind == "trap" else 95.0, "power":skill.power})
+	elif skill.kind in ["bolt", "fire", "arrow", "double"]:
+		if target >= 0 and monsters[target].hp > 0:
+			_spawn_projectile(id, center, skill)
+			if skill.kind == "double":
+				_spawn_projectile(id, center, skill, 0.16)
+	elif target >= 0 and monsters[target].hp > 0:
+		if skill.kind == "charge":
+			p.pos = Map.move_actor(p.pos, p.pos.direction_to(center) * maxf(0, p.pos.distance_to(center) - 40))
+		if p.pos.distance_to(center) <= 90 and Map.line_clear(p.pos, center):
+			_damage_monster(id, target, skill.power)
+			_fx("slash", p.pos, center, 65, color)
+
+func _spawn_projectile(owner: int, destination: Vector2, skill: Dictionary, delay := 0.0) -> void:
+	var origin: Vector2 = players[owner].pos
+	var speed := 550.0 if skill.kind in ["arrow", "double"] else 390.0
+	projectiles.append({"pos":origin, "origin":origin, "velocity":origin.direction_to(destination) * speed, "life":skill.range / speed + 0.06, "delay":delay, "owner":owner, "power":skill.power, "kind":skill.kind})
+	_fx("cast", origin, destination, 30, Data.CLASS_COLORS[players[owner].class_id])
+
+func _tick_projectiles(delta: float) -> void:
+	for shot in projectiles:
+		if not players.has(shot.owner):
+			shot.life = 0
+			continue
+		if shot.delay > 0:
+			shot.delay -= delta
+			continue
+		var travel: float = minf(delta, shot.life)
+		shot.life -= delta
+		var previous: Vector2 = shot.pos
+		var next: Vector2 = previous + shot.velocity * travel
+		# Check the swept segment, not only the end of a fast projectile.
+		var steps := maxi(1, ceili(previous.distance_to(next) / 5.0))
+		for step in range(1, steps + 1):
+			shot.pos = previous.lerp(next, float(step) / steps)
+			if Map.blocked(shot.pos, 1):
+				shot.life = 0
+				break
+			var hit := -1
+			for i in range(monsters.size()):
+				if monsters[i].hp > 0 and shot.pos.distance_to(monsters[i].pos) < 20:
+					hit = i
+					break
+			if hit >= 0:
+				if shot.kind == "fire":
+					_area_damage(shot.owner, shot.pos, 80, shot.power)
+					_fx("fire", shot.pos, shot.pos, 80, Color("ffad61"))
+				else:
+					_damage_monster(shot.owner, hit, shot.power)
+				shot.life = 0
+				break
+	projectiles = projectiles.filter(func(shot): return shot.life > 0)
+
+func _tick_zones(delta: float) -> void:
+	for zone in zones:
+		zone.life -= delta
+		zone.tick -= delta
+		if not players.has(zone.owner):
+			zone.life = 0
+			continue
+		if zone.kind == "trap":
+			for i in range(monsters.size()):
+				if monsters[i].hp > 0 and zone.pos.distance_to(monsters[i].pos) <= zone.radius and Map.line_clear(zone.pos, monsters[i].pos):
+					_damage_monster(zone.owner, i, zone.power, "root")
+					_fx("root", zone.pos, zone.pos, zone.radius, Color("b9d67b"))
+					zone.life = 0
+					break
+		elif zone.tick <= 0 and zone.pulses > 0:
+			_area_damage(zone.owner, zone.pos, zone.radius, zone.power)
+			_fx(zone.kind, zone.pos, zone.pos, zone.radius, Color("adbbff") if zone.kind == "storm" else Color("d8e9a4"))
+			zone.tick = 0.8
+			zone.pulses -= 1
+	zones = zones.filter(func(zone): return zone.life > 0)
+
+func _area_damage(owner: int, center: Vector2, radius: float, amount: float, status := "") -> void:
+	for i in range(monsters.size()):
+		if monsters[i].hp > 0 and center.distance_to(monsters[i].pos) <= radius and Map.line_clear(center, monsters[i].pos):
+			_damage_monster(owner, i, amount, status)
+
+func _damage_monster(owner: int, target: int, amount: float, status := "") -> void:
+	if not players.has(owner) or players[owner].hp <= 0 or monsters[target].hp <= 0:
+		return
+	var monster: Dictionary = monsters[target]
+	monster.hp = maxf(0, monster.hp - amount)
+	monster.hit = 0.2
+	if status == "slow":
+		monster.slow = 3.0
+	elif status == "root":
+		monster.root = 2.0
+	players[owner].combat = 4.0
+	_number(monster.pos, str(int(amount)), Color("fff0af"))
+	if monster.hp <= 0:
+		monster.timer = 8.0
+		monster.windup = 0.0
+		var p: Dictionary = players[owner]
+		var def: Dictionary = Data.ENEMIES[monster.kind]
+		p.xp += def.xp
+		p.gold += 2
+		p.kills += 1
+		p.progress[def.key] += 1
+		_message(p, "%s derrotado! +%s XP, +2 ouro." % [def.name, def.xp])
+		_fx("defeat", monster.pos, monster.pos, 30, Color("e9d48e"))
+
+func _hurt_player(id: int, damage: float) -> void:
+	var p: Dictionary = players[id]
+	if p.hp <= 0:
+		return
+	if p.evade > 0:
+		_number(p.pos, "ESQUIVA", Color("9ce9c0"))
+		return
+	var absorbed := minf(p.shield, damage)
+	p.shield -= absorbed
+	damage -= absorbed
+	p.hp = maxf(0, p.hp - damage)
+	p.combat = 4.0
+	_number(p.pos, str(int(damage)) if damage > 0 else "BLOQUEIO", Color("ffa898"))
+	if p.hp <= 0:
+		p.respawn = 3.0
+		p.cast = {}
+		p.shield = 0.0
+
+func _tick_monster(monster: Dictionary, delta: float) -> void:
+	if monster.hp <= 0:
+		monster.timer -= delta
+		if monster.timer <= 0:
+			monster.hp = monster.max_hp
+			monster.pos = monster.home
+			monster.path = []
+			monster.slow = 0.0
+			monster.root = 0.0
+		return
+	var def: Dictionary = Data.ENEMIES[monster.kind]
+	for timer in ["cooldown", "hit", "slow", "root", "path_timer"]:
+		monster[timer] = maxf(0, monster[timer] - delta)
+	monster.moving = false
+	if monster.windup > 0:
+		monster.windup -= delta
+		if monster.windup <= 0:
+			_fx("enemy_hit", monster.attack_pos, monster.attack_pos, def.radius, Color("f49e7b"))
+			for id in players:
+				if players[id].pos.distance_to(monster.attack_pos) < def.radius and players[id].pos.distance_to(SPAWN) > 85 and Map.line_clear(monster.pos, players[id].pos):
+					_hurt_player(id, def.damage)
+			monster.cooldown = 1.1 if monster.kind < 2 else 2.0
+		return
+	if monster.root > 0:
+		return
+	var target := -1
+	var distance := 225.0
+	for id in players:
+		var p: Dictionary = players[id]
+		var d: float = p.pos.distance_to(monster.pos)
+		if p.hp > 0 and d < distance and p.pos.distance_to(SPAWN) > 85:
+			target = id
+			distance = d
+	if target >= 0:
+		if distance <= def.reach and monster.cooldown <= 0 and Map.line_clear(monster.pos, players[target].pos):
+			monster.windup = def.windup
+			monster.attack_pos = players[target].pos
+		else:
+			_move_monster(monster, players[target].pos, delta, def.speed)
+	else:
+		_move_monster(monster, monster.home, delta, def.speed * 0.7)
+
+func _move_monster(monster: Dictionary, destination: Vector2, delta: float, speed: float) -> void:
+	if monster.pos.distance_to(destination) < 6:
+		return
+	var aim := destination
+	if not Map.line_clear(monster.pos, destination, 11):
+		if monster.path_timer <= 0:
+			var start := Vector2i(Vector2(monster.pos) / 16)
+			var end := Vector2i(destination / 16)
+			monster.path = []
+			if grid.is_in_boundsv(start) and grid.is_in_boundsv(end) and not grid.is_point_solid(start) and not grid.is_point_solid(end):
+				var path := grid.get_point_path(start, end)
+				for point in path:
+					monster.path.append(point)
+			monster.path_timer = 0.5
+		while not monster.path.is_empty() and monster.pos.distance_to(monster.path[0]) < 10:
+			monster.path.pop_front()
+		if monster.path.is_empty():
+			return
+		aim = monster.path[0]
+	var before: Vector2 = monster.pos
+	monster.pos = Map.move_actor(monster.pos, before.direction_to(aim) * minf(before.distance_to(aim), speed * delta * (0.45 if monster.slow > 0 else 1.0)))
+	monster.moving = before.distance_to(monster.pos) > 0.1
+
+func _interact(id: int) -> void:
+	if not players.has(id) or players[id].hp <= 0:
+		return
+	var p: Dictionary = players[id]
+	for i in range(Data.HERBS.size()):
+		if not p.picked.has(i) and p.pos.distance_to(Data.HERBS[i]) < 43 and Map.line_clear(p.pos, Data.HERBS[i]):
+			p.picked.append(i)
+			p.progress.herbs += 1
+			_message(p, "Erva coletada: %s/3. Entregue a Lia quando concluir." % p.progress.herbs)
+			_fx("heal", Data.HERBS[i], Data.HERBS[i], 25, Color("9fe8b0"))
+			return
+	if p.pos.distance_to(Data.NPC_POS) > 75:
+		_message(p, "Aproxime-se de Lia ou de uma erva luminosa para interagir.")
+		return
+	var rewards := 0
+	for i in range(Data.QUESTS.size()):
+		var quest: Dictionary = Data.QUESTS[i]
+		if not p.claimed.has(i) and p.progress[quest.key] >= quest.goal:
+			p.claimed.append(i)
+			p.xp += quest.xp
+			p.gold += quest.gold
+			rewards += 1
+	_message(p, "%s missão(ões) entregues! Ouro e XP recebidos." % rewards if rewards > 0 else "Lia: consulte o diário (J), cumpra os objetivos e volte para receber ouro e XP.")
+
+func _set_class(id: int, class_id: int) -> bool:
+	if not players.has(id) or class_id < 0 or class_id >= Data.CLASS_NAMES.size():
+		return false
+	var p: Dictionary = players[id]
+	if p.hp <= 0 or p.pos.distance_to(SPAWN) > 85 or p.combat > 0:
+		_message(p, "Troque de classe junto à fonte e fora de combate.")
+		return false
+	if p.class_id == class_id:
+		return true
+	p.class_id = class_id
+	p.max_hp = Data.CLASS_HP[class_id]
+	p.max_mana = Data.CLASS_MANA[class_id]
+	p.hp = p.max_hp
+	p.mana = p.max_mana
+	p.cds = [0.0,0.0,0.0,0.0,0.0]
+	p.cast = {}
+	p.request = -1
+	p.shield = 0.0
+	p.shield_time = 0.0
+	p.evade = 0.0
+	# Remove effects from the previous class to prevent class-swap damage exploits.
+	projectiles = projectiles.filter(func(shot): return shot.owner != id)
+	zones = zones.filter(func(zone): return zone.owner != id)
+	_message(p, "Classe alterada: %s. As cinco habilidades estão disponíveis." % Data.CLASS_NAMES[class_id])
+	return true
+
+func _message(p: Dictionary, text: String) -> void:
+	if p.message != text or clock - p.message_time > 1:
+		p.message = text
+		p.message_time = clock
+
+func _fx(kind: String, pos: Vector2, destination: Vector2, radius: float, color: Color) -> void:
+	effects.append({"kind":kind, "pos":pos, "to":destination, "radius":radius, "color":color, "life":0.5, "duration":0.5, "text":""})
+
+func _number(pos: Vector2, text: String, color: Color) -> void:
+	effects.append({"kind":"number", "pos":pos, "to":pos, "radius":0, "color":color, "life":0.8, "duration":0.8, "text":text})
 
 @rpc("any_peer", "call_remote", "unreliable_ordered")
-func _submit_input(direction: Vector2, attack: bool) -> void:
+func _submit_input(direction: Vector2, attack: bool, target: int = -1) -> void:
 	if not multiplayer.is_server():
 		return
 	var id := multiplayer.get_remote_sender_id()
-	if players.has(id) and is_finite(direction.x) and is_finite(direction.y):
-		commands[id] = {"direction": direction.limit_length(), "attack": attack}
+	if players.has(id) and is_finite(direction.x) and is_finite(direction.y) and target >= -1 and target < monsters.size():
+		commands[id] = {"direction":direction.limit_length(), "attack":attack, "target":target, "received":clock}
 		if attack:
 			smoke_attack_received = true
 
-@rpc("authority", "call_remote", "unreliable_ordered")
-func _receive_state(server_players: Dictionary, server_monsters: Array) -> void:
-	players = server_players
-	monsters.assign(server_monsters)
+@rpc("any_peer", "call_remote", "reliable")
+func _request_skill(slot: int, target: int) -> void:
+	if multiplayer.is_server():
+		_queue_skill(multiplayer.get_remote_sender_id(), slot, target)
+		if slot == 1:
+			smoke_special_received = true
+
+@rpc("any_peer", "call_remote", "reliable")
+func _request_interaction() -> void:
+	if multiplayer.is_server():
+		_interact(multiplayer.get_remote_sender_id())
+
+@rpc("any_peer", "call_remote", "reliable")
+func _request_class(class_id: int) -> void:
+	if multiplayer.is_server():
+		_set_class(multiplayer.get_remote_sender_id(), class_id)
+
+@rpc("authority", "call_remote", "reliable", 1)
+func _receive_state(packet: PackedByteArray) -> void:
+	# Reliable dedicated channel avoids fragmented unreliable snapshots; compression
+	# keeps the small co-op prototype's traffic bounded. Objects are never decoded.
+	var raw := packet.decompress_dynamic(1048576, FileAccess.COMPRESSION_DEFLATE)
+	if raw.is_empty():
+		return
+	var state: Variant = bytes_to_var(raw)
+	if not state is Array or state.size() != 5:
+		return
+	players = state[0]
+	monsters.assign(state[1])
+	projectiles.assign(state[2])
+	zones.assign(state[3])
+	effects.assign(state[4])
+
 
 func _host() -> void:
 	_close_connection()
@@ -173,6 +623,7 @@ func _host() -> void:
 		return
 	multiplayer.multiplayer_peer = peer
 	status_label.text = "Hospedando • UDP %s • até 8 convidados" % PORT
+	print("SERVER_READY: UDP %s" % PORT)
 
 func _join() -> void:
 	_close_connection()
@@ -193,6 +644,8 @@ func _close_connection() -> void:
 	multiplayer.multiplayer_peer = OfflineMultiplayerPeer.new()
 
 func _connected() -> void:
+	if smoke_client:
+		choose_class(1)
 	status_label.text = "Conectado • jogador %s" % multiplayer.get_unique_id()
 
 func _peer_connected(id: int) -> void:
@@ -227,37 +680,6 @@ func _build_ui() -> void:
 func _update_labels() -> void:
 	hud.refresh()
 
-func _draw() -> void:
-	_draw_village()
-
-	for monster in monsters:
-		if monster.hp <= 0:
-			continue
-		var pos: Vector2 = monster.pos
-		draw_ellipse_shadow(pos)
-		draw_circle(pos, 17, Color("74b540"))
-		draw_circle(pos + Vector2(-4, -5), 9, Color("c7ec76"))
-		draw_rect(Rect2(pos + Vector2(-7, -2), Vector2(3, 4)), Color("22342b"))
-		draw_rect(Rect2(pos + Vector2(4, -2), Vector2(3, 4)), Color("22342b"))
-		_health_bar(pos + Vector2(-20, -29), float(monster.hp) / 40, Color("b7d77e"))
-	for id in players:
-		var p: Dictionary = players[id]
-		if p.hp <= 0:
-			continue
-		var pos: Vector2 = p.pos
-		draw_ellipse_shadow(pos)
-		var local: bool = id == multiplayer.get_unique_id()
-		if local:
-			draw_arc(pos, 24, 0, TAU, 24, Color("e7cd89"), 2)
-		if p.swing > 0:
-			draw_arc(pos, 70, -PI * 0.8, PI * 0.8, 24, Color("f9e5ac"), 4)
-		var animation: Dictionary = animations.get(id, {"row": 0, "frame": 0})
-		var region := _hero_region(animation.row, animation.frame)
-		var tint := Color.WHITE if local else Color(0.85, 0.85, 1.0)
-		draw_texture_rect_region(HERO_SHEET, Rect2(pos + Vector2(-38, -60), Vector2(76, 76)), region, tint)
-		_health_bar(pos + Vector2(-20, -60), float(p.hp) / 100, Color("79c7ba"))
-		var caption := "Guardião" if local else "Viajante %s" % str(id).right(3)
-		_world_text(caption, pos + Vector2(-32, -68), Color("fff0ad"))
 
 func _hero_region(row: int, frame: int) -> Rect2:
 	var cell := Vector2(HERO_SHEET.get_size()) / 4.0
@@ -286,43 +708,23 @@ func _update_animation(delta: float) -> void:
 		animation.pos = pos
 
 
-func _draw_village() -> void:
-	draw_texture_rect(MAP_TEXTURE, Rect2(0, 0, 1152, 636), false)
-	# The healing fountain is drawn over the empty plaza in the generated map.
-	draw_circle(SPAWN + Vector2(0, 7), 29, Color("5b685b"))
-	draw_circle(SPAWN, 27, Color("c9cba5"))
-	draw_circle(SPAWN, 21, Color("368f9c"))
-	draw_circle(SPAWN + Vector2(-2, -3), 16, Color("6ed4ca"))
-	draw_rect(Rect2(SPAWN + Vector2(-5, -19), Vector2(10, 23)), Color("dce0bb"))
-	_world_text("Fonte da Aurora", SPAWN + Vector2(-55, -94), Color("fff3bd"))
-	_world_text("Bosque dos limos", Vector2(720, 120), Color("f3edbc"))
-
-func _world_text(text: String, pos: Vector2, color: Color) -> void:
-	var font := ThemeDB.fallback_font
-	draw_string_outline(font, pos, text, HORIZONTAL_ALIGNMENT_LEFT, -1, 14, 4, Color("293a2c"))
-	draw_string(font, pos, text, HORIZONTAL_ALIGNMENT_LEFT, -1, 14, color)
-
-func draw_ellipse_shadow(pos: Vector2) -> void:
-	draw_set_transform(pos + Vector2(0, 16), 0, Vector2(1, 0.35))
-	draw_circle(Vector2.ZERO, 19, Color(0, 0, 0, 0.25))
-	draw_set_transform(Vector2.ZERO)
-
-func _health_bar(pos: Vector2, ratio: float, color: Color) -> void:
-	draw_rect(Rect2(pos, Vector2(40, 5)), Color("17232e"))
-	draw_rect(Rect2(pos, Vector2(40 * ratio, 5)), color)
-
 func _smoke_check(delta: float) -> void:
 	if not smoke_client and not smoke_host:
 		return
 	smoke_elapsed += delta
+	if smoke_client and players.has(multiplayer.get_unique_id()):
+		var mine: Dictionary = players[multiplayer.get_unique_id()]
+		if not smoke_special_sent and mine.class_id == 1 and mine.pos.x > 390:
+			use_skill(1)
+			smoke_special_sent = true
 	if smoke_client and smoke_elapsed > 2 and players.has(multiplayer.get_unique_id()):
 		var p: Dictionary = players[multiplayer.get_unique_id()]
-		if p.pos.x > SPAWN.x + 80 and monsters.size() == 5:
-			print("NETWORK_CLIENT_PASS: authoritative movement and monster snapshots received")
+		if p.pos.x > SPAWN.x + 80 and monsters.size() == 6 and p.cds.size() == 5 and p.progress.has("golem") and p.class_id == 1 and p.cds[1] > 0:
+			print("NETWORK_CLIENT_PASS: authoritative movement, class change, special skill cooldown, enemy types and quests synchronized")
 			get_tree().quit(0)
-	if smoke_host and smoke_attack_received:
-		print("NETWORK_HOST_PASS: remote attack input accepted")
+	if smoke_host and smoke_attack_received and smoke_special_received:
+		print("NETWORK_HOST_PASS: remote combat input accepted")
 		smoke_host = false
 	if smoke_client and smoke_elapsed > 12:
-		push_error("NETWORK_CLIENT_FAIL: no authoritative movement")
+		push_error("NETWORK_CLIENT_FAIL: no authoritative state")
 		get_tree().quit(1)
