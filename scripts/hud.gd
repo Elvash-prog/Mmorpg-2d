@@ -26,7 +26,13 @@ func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_panel(self, Rect2(12, 12, 258, 92))
-	_label(self, "◆", Vector2(24, 22), 34, Color("dcc18a"))
+	var portrait := Sprite2D.new()
+	portrait.texture = world.HERO_SHEET
+	portrait.region_enabled = true
+	portrait.region_rect = world._hero_region(0, 0)
+	portrait.position = Vector2(43, 50)
+	portrait.scale = Vector2(58, 68) / world._hero_region(0, 0).size
+	add_child(portrait)
 	_label(self, "GUARDIÃO", Vector2(72, 19), 17, Color("ffe4a7"))
 	_label(self, "AURORA", Vector2(24, 73), 10, Color("ceb888"))
 	health = _bar(Rect2(74, 48, 182, 18), Color("c24d50"))
@@ -164,10 +170,9 @@ func _draw() -> void:
 	draw_style_box(_style(Color(0.10, 0.14, 0.13, 0.95)), Rect2(970, 12, 170, 155))
 	# Map markers use the actual authoritative positions, never a mock map.
 	var map_rect := Rect2(982, 46, 146, 88)
-	draw_rect(map_rect, Color("6e8f43"))
-	draw_rect(Rect2(987, 52, 10, 74), Color("6ec2c2"))
-	draw_rect(Rect2(1012, 46, 15, 88), Color("c7c09b"))
-	draw_rect(Rect2(982, 82, 146, 9), Color("c7c09b"))
+	var source_scale: Vector2 = world.MAP_TEXTURE.get_size() / Vector2(1152, 636)
+	var source_rect := Rect2(world.ARENA.position * source_scale, world.ARENA.size * source_scale)
+	draw_texture_rect_region(world.MAP_TEXTURE, map_rect, source_rect)
 	for monster in world.monsters:
 		if monster.hp > 0:
 			draw_rect(Rect2(_map_position(monster.pos, map_rect) - Vector2(2, 2), Vector2(4, 4)), Color("ecb66d"))

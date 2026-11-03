@@ -1,6 +1,6 @@
 # Aurora — Fronteira Viva
 
-Primeiro protótipo de um RPG 2D para PC e Android, inspirado no gênero dos MMORPGs clássicos, com mundo e visual próprios. Arte provisória gerada pelo código; nenhum recurso do Warspear é usado.
+Primeiro protótipo de um RPG 2D para PC e Android, inspirado no gênero dos MMORPGs clássicos, com mundo e visual próprios. O guardião e o fundo da vila usam arte gerada por IA para este projeto; nenhum recurso do Warspear é usado. O guardião tem caminhada em quatro direções; os limos e efeitos ainda usam desenhos simples por código.
 
 ## Jogar no computador
 
@@ -19,11 +19,17 @@ Esta versão é um teste em rede local para até oito convidados. Conexão pela 
 
 ## Interface
 
-A interface usa painéis escuros com bordas douradas, vida e experiência no canto superior esquerdo, um minimapa com posições reais à direita, objetivo da missão, mensagens locais do sistema e barra inferior. O primeiro espaço executa o ataque; os espaços 2–5 estão explicitamente bloqueados e reservados. **MENU** abre o guia; **REDE** abre as opções de multiplayer. A barra azul representa experiência, não mana. O cenário tem arte provisória original, desenhada pelo código; casas, água e árvores são decorativas, sem colisões nesta versão.
+A interface usa painéis escuros com bordas douradas, vida e experiência no canto superior esquerdo, um minimapa com posições reais à direita, objetivo da missão, mensagens locais do sistema e barra inferior. O primeiro espaço executa o ataque; os espaços 2–5 estão explicitamente bloqueados e reservados. **MENU** abre o guia; **REDE** abre as opções de multiplayer. A barra azul representa experiência, não mana. O cenário usa um fundo estático gerado por IA; casas, água e árvores são decorativas, sem colisões nesta versão.
 
 ![Interface no PC](docs/interface-pc.png)
 
 No modo de toque, um direcional aparece sobre o mapa e aceita movimento e ataque simultâneos. Para conferir esse layout no PC, execute `godot --path . -- --touch-ui`. A proporção da tela é preservada para evitar cortes; aparelhos mais largos podem mostrar barras laterais. O toque ainda precisa ser validado em um aparelho Android real.
+
+## Arte gerada por IA
+
+`assets/guardian.png` é uma folha com 16 quadros (4 colunas × 4 linhas): sul, oeste, leste e norte. Cada linha contém repouso e passos alternados. O jogo recorta as regiões na renderização, seleciona a direção a partir do movimento e usa o primeiro quadro ao parar. O ataque usa o efeito de arco sobre o personagem; não há ainda uma animação corporal de ataque dedicada.
+
+`assets/village.png` é um fundo de mapa contínuo, não um TileSet editável. A fonte funcional é desenhada sobre a praça e o minimapa usa uma região da mesma imagem. A folha original é preservada sem recortes destrutivos. As artes ainda podem precisar de ajustes de alinhamento e uniformidade entre quadros. Veja [notas de geração](assets/ART.md).
 
 ## Android
 
@@ -32,6 +38,8 @@ O projeto usa renderização Compatibility, orientação horizontal e controles 
 ## Desenvolvimento e validação
 
 ```sh
+# Na primeira execução após clonar, importe as texturas:
+godot --headless --editor --import --path . --quit
 godot --path .
 godot --headless --path . --script tests/combat_test.gd
 godot --headless --path . --script tests/ui_test.gd

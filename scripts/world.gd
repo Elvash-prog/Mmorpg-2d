@@ -1,10 +1,13 @@
 extends Node2D
-## Small server-authoritative arena. All artwork is drawn locally.
+## Small server-authoritative arena with AI-generated art and local animation.
 
+const HERO_SHEET = preload("res://assets/guardian.png")
+const MAP_TEXTURE = preload("res://assets/village.png")
 const PORT := 24567
 const SPEED := 165.0
 const ARENA := Rect2(16, 112, 1120, 490)
-const SPAWN := Vector2(300, 340)
+const SPAWN := Vector2(300, 318)
+var animations: Dictionary = {}
 var players: Dictionary = {}
 var monsters: Array[Dictionary] = []
 var commands: Dictionary = {}
@@ -42,6 +45,7 @@ func _ready() -> void:
 	_update_labels()
 
 func _reset_world() -> void:
+	animations.clear()
 	players.clear()
 	commands.clear()
 	players[1] = _new_player()
@@ -76,6 +80,7 @@ func _process(delta: float) -> void:
 		send_elapsed = 0.0
 		_receive_state.rpc(players, monsters)
 	attack_flash = maxf(0.0, attack_flash - delta)
+	_update_animation(delta)
 	_update_labels()
 	queue_redraw()
 	_smoke_check(delta)
@@ -246,82 +251,51 @@ func _draw() -> void:
 			draw_arc(pos, 24, 0, TAU, 24, Color("e7cd89"), 2)
 		if p.swing > 0:
 			draw_arc(pos, 70, -PI * 0.8, PI * 0.8, 24, Color("f9e5ac"), 4)
-		draw_rect(Rect2(pos + Vector2(-10, -5), Vector2(20, 23)), Color("5c91b3") if local else Color("b18cbb"))
-		draw_rect(Rect2(pos + Vector2(-7, -21), Vector2(14, 15)), Color("e5bb8b"))
-		draw_rect(Rect2(pos + Vector2(-9, -23), Vector2(18, 6)), Color("384454"))
-		draw_line(pos + Vector2(15, 12), pos + Vector2(20, -13), Color("d5e5e5"), 4)
-		_health_bar(pos + Vector2(-20, -36), float(p.hp) / 100, Color("79c7ba"))
+		var animation: Dictionary = animations.get(id, {"row": 0, "frame": 0})
+		var region := _hero_region(animation.row, animation.frame)
+		var tint := Color.WHITE if local else Color(0.85, 0.85, 1.0)
+		draw_texture_rect_region(HERO_SHEET, Rect2(pos + Vector2(-38, -60), Vector2(76, 76)), region, tint)
+		_health_bar(pos + Vector2(-20, -60), float(p.hp) / 100, Color("79c7ba"))
 		var caption := "Guardião" if local else "Viajante %s" % str(id).right(3)
-		_world_text(caption, pos + Vector2(-32, -44), Color("fff0ad"))
+		_world_text(caption, pos + Vector2(-32, -68), Color("fff0ad"))
+
+func _hero_region(row: int, frame: int) -> Rect2:
+	var cell := Vector2(HERO_SHEET.get_size()) / 4.0
+	return Rect2(Vector2(frame, row) * cell, cell)
+
+func _update_animation(delta: float) -> void:
+	for id in animations.keys():
+		if not players.has(id):
+			animations.erase(id)
+	for id in players:
+		var pos: Vector2 = players[id].pos
+		if not animations.has(id):
+			animations[id] = {"pos": pos, "row": 0, "frame": 0, "elapsed": 0.0}
+		var animation: Dictionary = animations[id]
+		var movement: Vector2 = pos - animation.pos
+		# Interpolate animation between network snapshots without altering game state.
+		if movement.length() > 0.1 and movement.length() < 100:
+			if absf(movement.x) > absf(movement.y):
+				animation.row = 1 if movement.x < 0 else 2
+			else:
+				animation.row = 3 if movement.y < 0 else 0
+			animation.elapsed = 0.12
+		else:
+			animation.elapsed = maxf(0, animation.elapsed - delta)
+		animation.frame = (int(Time.get_ticks_msec() / 125) % 4) if animation.elapsed > 0 and players[id].hp > 0 else 0
+		animation.pos = pos
+
 
 func _draw_village() -> void:
-	draw_rect(Rect2(0, 0, 1152, 636), Color("89ad4b"))
-	for y in range(8, 632, 16):
-		for x in range(8, 1152, 16):
-			var n := (x * 17 + y * 31) % 23
-			if n < 10:
-				draw_rect(Rect2(x, y, 7, 3), Color("9cbb55") if n < 5 else Color("7b9e43"))
-	# A stone promenade crosses the village.
-	for y in range(112, 604, 30):
-		for x in range(250, 370, 30):
-			_stone(Vector2(x, y), Vector2(28, 28))
-	for y in range(310, 370, 30):
-		for x in range(130, 1130, 30):
-			_stone(Vector2(x, y), Vector2(28, 28))
-	# Water and banks are original procedural scenery.
-	draw_rect(Rect2(40, 140, 90, 410), Color("c8bc81"))
-	draw_rect(Rect2(48, 148, 74, 394), Color("3ca6b0"))
-	for y in range(154, 540, 20):
-		draw_rect(Rect2(52 + y % 27, y, 23, 3), Color("8ae1d1"))
-	for x in range(36, 136, 16):
-		draw_rect(Rect2(x, 310, 14, 60), Color("8d6742"))
-		draw_line(Vector2(x, 312), Vector2(x + 12, 312), Color("cfac6a"), 3)
-	_draw_house(Vector2(395, 180))
-	for pos in [Vector2(176, 215), Vector2(170, 488), Vector2(1020, 204), Vector2(1040, 510), Vector2(465, 520), Vector2(900, 530)]:
-		_draw_tree(pos)
-	for pos in [Vector2(205, 420), Vector2(530, 170), Vector2(950, 410), Vector2(780, 560)]:
-		draw_rect(Rect2(pos, Vector2(14, 9)), Color("9b987b"))
-		draw_rect(Rect2(pos + Vector2(2, -4), Vector2(9, 5)), Color("ddd5aa"))
-	for pos in [Vector2(220, 260), Vector2(420, 430), Vector2(955, 225), Vector2(560, 495), Vector2(810, 160)]:
-		for i in range(4):
-			var f: Vector2 = pos + Vector2(i * 7, (i % 2) * 8)
-			draw_rect(Rect2(f, Vector2(3, 8)), Color("536c35"))
-			draw_rect(Rect2(f + Vector2(-2, -2), Vector2(7, 4)), Color("f4dfa0") if i % 2 == 0 else Color("d68a9a"))
-	draw_circle(SPAWN + Vector2(0, 10), 36, Color("6c7a66"))
-	draw_circle(SPAWN, 31, Color("d6cc9d"))
-	draw_circle(SPAWN, 24, Color("419caa"))
-	draw_circle(SPAWN + Vector2(-4, -4), 17, Color("80d9cf"))
-	draw_rect(Rect2(SPAWN + Vector2(-6, -20), Vector2(12, 24)), Color("e7dfb6"))
-	_world_text("Fonte da Aurora", SPAWN + Vector2(-55, -70), Color("fff3bd"))
+	draw_texture_rect(MAP_TEXTURE, Rect2(0, 0, 1152, 636), false)
+	# The healing fountain is drawn over the empty plaza in the generated map.
+	draw_circle(SPAWN + Vector2(0, 7), 29, Color("5b685b"))
+	draw_circle(SPAWN, 27, Color("c9cba5"))
+	draw_circle(SPAWN, 21, Color("368f9c"))
+	draw_circle(SPAWN + Vector2(-2, -3), 16, Color("6ed4ca"))
+	draw_rect(Rect2(SPAWN + Vector2(-5, -19), Vector2(10, 23)), Color("dce0bb"))
+	_world_text("Fonte da Aurora", SPAWN + Vector2(-55, -94), Color("fff3bd"))
 	_world_text("Bosque dos limos", Vector2(720, 120), Color("f3edbc"))
-
-func _stone(pos: Vector2, dimensions: Vector2) -> void:
-	draw_rect(Rect2(pos, dimensions), Color("9d9b80"))
-	draw_rect(Rect2(pos, dimensions - Vector2(2, 3)), Color("d0c8a4"))
-	draw_line(pos + Vector2(2, 2), pos + Vector2(dimensions.x - 3, 2), Color("e6dfbf"), 2)
-
-func _draw_tree(pos: Vector2) -> void:
-	draw_rect(Rect2(pos + Vector2(-23, 5), Vector2(52, 16)), Color(0.16, 0.24, 0.13, 0.25))
-	draw_rect(Rect2(pos + Vector2(-7, -12), Vector2(14, 33)), Color("725134"))
-	draw_rect(Rect2(pos + Vector2(-4, -12), Vector2(4, 30)), Color("aa8150"))
-	for piece in [Rect2(-33, -45, 60, 25), Rect2(-24, -62, 47, 22), Rect2(-39, -35, 75, 18)]:
-		draw_rect(Rect2(piece.position + pos + Vector2(3, 5), piece.size), Color("4a6935"))
-		draw_rect(Rect2(piece.position + pos, piece.size), Color("b4bd52"))
-		draw_rect(Rect2(piece.position + pos, Vector2(piece.size.x - 8, 7)), Color("d3d878"))
-
-func _draw_house(pos: Vector2) -> void:
-	draw_rect(Rect2(pos + Vector2(-5, 18), Vector2(138, 78)), Color("7e7953"))
-	draw_rect(Rect2(pos, Vector2(125, 85)), Color("dac48a"))
-	for y in range(0, 80, 16):
-		draw_line(pos + Vector2(0, y), pos + Vector2(125, y), Color("b39b6a"), 2)
-	draw_rect(Rect2(pos + Vector2(42, 34), Vector2(35, 51)), Color("554b3b"))
-	draw_rect(Rect2(pos + Vector2(47, 39), Vector2(24, 46)), Color("303e37"))
-	for x in [12, 90]:
-		draw_rect(Rect2(pos + Vector2(x, 27), Vector2(22, 24)), Color("675741"))
-		draw_rect(Rect2(pos + Vector2(x + 3, 30), Vector2(16, 16)), Color("6cbbc0"))
-	for row in range(5):
-		draw_rect(Rect2(pos + Vector2(-10 + row * 8, -row * 10), Vector2(145 - row * 16, 12)), Color("a9634a") if row % 2 == 0 else Color("c78355"))
-	_world_text("Casa dos viajantes", pos + Vector2(-4, -58), Color("fff0b1"))
 
 func _world_text(text: String, pos: Vector2, color: Color) -> void:
 	var font := ThemeDB.fallback_font

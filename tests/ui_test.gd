@@ -9,6 +9,17 @@ func _run() -> void:
 	await process_frame
 	world.set_process(false)
 	var hud = world.hud
+	assert(world._hero_region(3, 3).end == Vector2(world.HERO_SHEET.get_size()), "All 16 frame regions must fit the sprite sheet")
+	assert(world.HERO_SHEET.get_image().get_pixel(0, 0).a == 0, "Hero background must be transparent")
+	world._update_animation(0.016)
+	world.players[1].pos += Vector2(4, 0)
+	world._update_animation(0.016)
+	assert(world.animations[1].row == 2, "Walking right must select east-facing frames")
+	world.players[1].pos += Vector2(0, -4)
+	world._update_animation(0.016)
+	assert(world.animations[1].row == 3, "Walking up must select north-facing frames")
+	world._update_animation(0.5)
+	assert(world.animations[1].frame == 0, "Stopped hero must return to idle")
 	assert(hud.health.value == 100, "HUD must show actual player health")
 	world.players[1].hp = 35
 	world.players[1].xp = 25
@@ -36,6 +47,6 @@ func _run() -> void:
 		await RenderingServer.frame_post_draw
 		var output := "/tmp/aurora-touch.png" if "--touch-ui" in OS.get_cmdline_user_args() else "/tmp/aurora-interface.png"
 		assert(root.get_texture().get_image().save_png(output) == OK)
-	print("UI_PASS: health, XP, quest, death feed, default menus, minimap coordinates")
+	print("UI_PASS: sprite alpha/grid, directional animation, idle, health, XP, quest, death feed, menus, minimap")
 	world.queue_free()
 	quit(0)
