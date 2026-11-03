@@ -1,0 +1,73 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="Script" path="res://scripts/presentation/animation_clip.gd" id="1_j0xfe"]
+[ext_resource type="Texture2D" path="res://assets/enemies.png" id="2_axlmt"]
+[ext_resource type="Script" path="res://scripts/presentation/animation_profile.gd" id="3_dwudg"]
+
+[sub_resource type="Resource" id="Resource_q7q5y"]
+script = ExtResource("1_j0xfe")
+state = &"idle"
+texture = ExtResource("2_axlmt")
+grid = Vector2i(4, 3)
+directional = false
+frames = PackedInt32Array(0)
+durations = PackedFloat32Array(0.12)
+mirror_left = true
+
+[sub_resource type="Resource" id="Resource_cboht"]
+script = ExtResource("1_j0xfe")
+state = &"walk"
+texture = ExtResource("2_axlmt")
+grid = Vector2i(4, 3)
+directional = false
+frames = PackedInt32Array(0, 1)
+durations = PackedFloat32Array(0.12, 0.12)
+distance_per_frame = 13.0
+mirror_left = true
+
+[sub_resource type="Resource" id="Resource_6eg47"]
+script = ExtResource("1_j0xfe")
+state = &"prepare"
+texture = ExtResource("2_axlmt")
+grid = Vector2i(4, 3)
+directional = false
+frames = PackedInt32Array(2)
+durations = PackedFloat32Array(0.12)
+mirror_left = true
+
+[sub_resource type="Resource" id="Resource_5wobn"]
+script = ExtResource("1_j0xfe")
+state = &"attack"
+texture = ExtResource("2_axlmt")
+grid = Vector2i(4, 3)
+directional = false
+frames = PackedInt32Array(3)
+durations = PackedFloat32Array(0.12)
+mirror_left = true
+
+[sub_resource type="Resource" id="Resource_hbdrs"]
+script = ExtResource("1_j0xfe")
+state = &"recover"
+texture = ExtResource("2_axlmt")
+grid = Vector2i(4, 3)
+directional = false
+frames = PackedInt32Array(0)
+durations = PackedFloat32Array(0.12)
+mirror_left = true
+
+[sub_resource type="Resource" id="Resource_w1wj3"]
+script = ExtResource("1_j0xfe")
+state = &"dead"
+texture = ExtResource("2_axlmt")
+grid = Vector2i(4, 3)
+directional = false
+frames = PackedInt32Array(0)
+durations = PackedFloat32Array(0.12)
+mirror_left = true
+
+[resource]
+script = ExtResource("3_dwudg")
+id = &"animation.enemy.slime"
+display_size = Vector2(64, 64)
+foot_anchor = Vector2(0.5, 0.78125)
+clips = Array[Resource]([SubResource("Resource_q7q5y"), SubResource("Resource_cboht"), SubResource("Resource_6eg47"), SubResource("Resource_5wobn"), SubResource("Resource_hbdrs"), SubResource("Resource_w1wj3")])

@@ -1,39 +1,12 @@
 extends RefCounted
-## Hand-aligned foot collision masks over the illustrated background.
-const Realm = preload("res://scripts/realm_data.gd")
-const BOUNDS := Rect2(16, 112, 1120, 490)
-const BLOCKERS := [
-	Rect2(32, 112, 83, 181), # Stream north of bridge.
-	Rect2(33, 350, 86, 252), # Stream south of bridge.
-	Rect2(395, 155, 176, 91), # Cottage walls and porch.
-	Rect2(360, 118, 35, 49), # Tree beside cottage.
-	Rect2(142, 219, 29, 28), # Western boulder.
-	Rect2(201, 128, 31, 20), # Rocks beside path.
-	Rect2(1040, 112, 96, 90), # East treeline and boulders.
-	Rect2(1070, 208, 66, 124),
-	Rect2(1060, 351, 76, 113),
-	Rect2(1050, 485, 86, 117),
-	Rect2(385, 574, 95, 28), # Southern trees.
-	Rect2(493, 580, 60, 22),
-	Rect2(712, 574, 42, 28)
-]
+## Shared collision queries: the geometry is authored in content/maps/*.tscn.
+const Registry = preload("res://scripts/maps/map_registry.gd")
+static var BOUNDS: Rect2 = Registry.area_definitions()[0].walk
+static var BLOCKERS: Array = Registry.collision_rects(0)
+static var EXTRA_BLOCKERS: Array = Registry.collision_rects(1)+Registry.collision_rects(2)
 
-const EXTRA_BLOCKERS := [
-	Rect2(1850,130,210,200), Rect2(1950,850,160,180),
-	Rect2(3200,140,160,170), Rect2(1400,1060,180,140),
-	Rect2(1800,1450,210,170), Rect2(1990,2140,170,200),
-	Rect2(3220,1430,140,180), Rect2(1440,2290,150,150)
-]
-
-static func blocked(pos: Vector2, radius := 11.0) -> bool:
-	var area := Realm.area_at(pos)
-	if area < 0 or not Realm.AREAS[area].walk.grow(-radius).has_point(pos):
-		return true
-	var masks: Array = BLOCKERS if area == 0 else EXTRA_BLOCKERS
-	for rect in masks:
-		if rect.grow(radius).has_point(pos):
-			return true
-	return false
+static func blocked(pos: Vector2,radius := 11.0) -> bool:
+	return Registry.blocked(pos,radius)
 
 static func move_actor(pos: Vector2, displacement: Vector2, radius := 11.0) -> Vector2:
 	# Substeps prevent tunnelling even for dashes or slow server frames.

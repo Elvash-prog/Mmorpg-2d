@@ -1,0 +1,10 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="PackedScene" path="res://content/maps/vale.tscn" id="1_8yrd2"]
+[ext_resource type="PackedScene" path="res://content/maps/forest.tscn" id="2_bpg5q"]
+[ext_resource type="PackedScene" path="res://content/maps/citadel.tscn" id="3_24vdy"]
+[ext_resource type="Script" path="res://scripts/maps/map_manifest.gd" id="4_e1fiw"]
+
+[resource]
+script = ExtResource("4_e1fiw")
+regions = Array[PackedScene]([ExtResource("1_8yrd2"), ExtResource("2_bpg5q"), ExtResource("3_24vdy")])

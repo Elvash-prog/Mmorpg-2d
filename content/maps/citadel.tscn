@@ -1,0 +1,171 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/maps/map_region.gd" id="1_3q2kf"]
+[ext_resource type="Texture2D" path="res://assets/ruins.png" id="2_edwub"]
+[ext_resource type="Texture2D" path="res://assets/village.png" id="3_t5qaa"]
+[ext_resource type="Script" path="res://scripts/maps/map_object.gd" id="4_o6lc7"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_5gxpb"]
+texture = ExtResource("3_t5qaa")
+texture_region_size = Vector2i(32, 32)
+27:17/0 = 0
+13:18/0 = 0
+2:5/0 = 0
+2:5/0/custom_data_0 = true
+
+[sub_resource type="TileSet" id="TileSet_7hfpr"]
+tile_size = Vector2i(32, 32)
+custom_data_layer_0/name = "blocked"
+custom_data_layer_0/type = 1
+sources/0 = SubResource("TileSetAtlasSource_5gxpb")
+
+[node name="Cidadela" type="Node2D" unique_id=931581822]
+position = Vector2(1152, 1272)
+script = ExtResource("1_3q2kf")
+region_id = &"area.citadel"
+region_index = 2
+display_name = "Cidadela do Ocaso"
+subtitle = "Onde o primeiro juramento foi quebrado"
+dimensions = Vector2(2304, 1272)
+walk_rect = Rect2(32, 64, 2240, 1152)
+theme_color = Color(0.7137255, 0.70980394, 0.93333334, 1)
+
+[node name="Background" type="Sprite2D" parent="." unique_id=780145220]
+scale = Vector2(1.3779905, 1.3517535)
+texture = ExtResource("2_edwub")
+centered = false
+
+[node name="Terrain" type="TileMapLayer" parent="." unique_id=1397319097]
+tile_set = SubResource("TileSet_7hfpr")
+
+[node name="Decoration" type="TileMapLayer" parent="." unique_id=982255922]
+tile_set = SubResource("TileSet_7hfpr")
+
+[node name="CollisionTiles" type="TileMapLayer" parent="." unique_id=225291551]
+modulate = Color(1, 1, 1, 0)
+tile_set = SubResource("TileSet_7hfpr")
+
+[node name="Foreground" type="TileMapLayer" parent="." unique_id=80241043]
+z_index = 5
+tile_set = SubResource("TileSet_7hfpr")
+
+[node name="Collision" type="Node2D" parent="." unique_id=2121628167]
+
+[node name="Obstacle00" type="StaticBody2D" parent="Collision" unique_id=1273112584]
+
+[node name="Shape" type="CollisionPolygon2D" parent="Collision/Obstacle00" unique_id=1922920424]
+polygon = PackedVector2Array(648, 178, 858, 178, 858, 348, 648, 348)
+
+[node name="Obstacle01" type="StaticBody2D" parent="Collision" unique_id=1825304130]
+
+[node name="Shape" type="CollisionPolygon2D" parent="Collision/Obstacle01" unique_id=609498814]
+polygon = PackedVector2Array(838, 868, 1008, 868, 1008, 1068, 838, 1068)
+
+[node name="Obstacle02" type="StaticBody2D" parent="Collision" unique_id=333696020]
+
+[node name="Shape" type="CollisionPolygon2D" parent="Collision/Obstacle02" unique_id=776906411]
+polygon = PackedVector2Array(2068, 158, 2208, 158, 2208, 338, 2068, 338)
+
+[node name="Obstacle03" type="StaticBody2D" parent="Collision" unique_id=1557829130]
+
+[node name="Shape" type="CollisionPolygon2D" parent="Collision/Obstacle03" unique_id=1933090400]
+polygon = PackedVector2Array(288, 1018, 438, 1018, 438, 1168, 288, 1168)
+
+[node name="Objects" type="Node2D" parent="." unique_id=1020563521]
+
+[node name="Portal3" type="Marker2D" parent="Objects" unique_id=1636405517]
+position = Vector2(98, 138)
+script = ExtResource("4_o6lc7")
+object_id = &"portal.3"
+kind = "portal"
+properties = {
+"area": 2,
+&"arrival_offset": Vector2(-60, -30),
+&"index": 3,
+"name": "Bosque dos Ecos",
+&"target_id": &"portal.2"
+}
+
+[node name="Npc2" type="Marker2D" parent="Objects" unique_id=224175485]
+position = Vector2(298, 238)
+script = ExtResource("4_o6lc7")
+object_id = &"npc.2"
+kind = "npc"
+properties = {
+"area": 2,
+&"index": 2,
+"name": "Memória de Íria",
+"role": "Eco do primeiro juramento"
+}
+
+[node name="Beacon1" type="Marker2D" parent="Objects" unique_id=1685630480]
+position = Vector2(898, 718)
+script = ExtResource("4_o6lc7")
+object_id = &"beacon.1"
+kind = "beacon"
+properties = {
+"area": 2,
+&"index": 1,
+"key": "ruins_beacon",
+"name": "Memória da cidadela"
+}
+
+[node name="Chest3" type="Marker2D" parent="Objects" unique_id=635697193]
+position = Vector2(718, 488)
+script = ExtResource("4_o6lc7")
+object_id = &"chest.3"
+definition_id = &"item.runic_coat"
+properties = {
+"area": 2,
+&"index": 3
+}
+
+[node name="Enemy12" type="Marker2D" parent="Objects" unique_id=1190277228]
+position = Vector2(498, 368)
+script = ExtResource("4_o6lc7")
+object_id = &"enemy.12"
+kind = "enemy"
+definition_id = &"enemy.golem"
+properties = {
+&"index": 12
+}
+
+[node name="Enemy13" type="Marker2D" parent="Objects" unique_id=1105308205]
+position = Vector2(928, 428)
+script = ExtResource("4_o6lc7")
+object_id = &"enemy.13"
+kind = "enemy"
+definition_id = &"enemy.golem"
+properties = {
+&"index": 13
+}
+
+[node name="Enemy14" type="Marker2D" parent="Objects" unique_id=108897860]
+position = Vector2(1248, 928)
+script = ExtResource("4_o6lc7")
+object_id = &"enemy.14"
+kind = "enemy"
+definition_id = &"enemy.golem"
+properties = {
+&"index": 14
+}
+
+[node name="Enemy15" type="Marker2D" parent="Objects" unique_id=145246248]
+position = Vector2(1758, 968)
+script = ExtResource("4_o6lc7")
+object_id = &"enemy.15"
+kind = "enemy"
+definition_id = &"enemy.golem"
+properties = {
+&"index": 15
+}
+
+[node name="Enemy16" type="Marker2D" parent="Objects" unique_id=744568440]
+position = Vector2(1608, 698)
+script = ExtResource("4_o6lc7")
+object_id = &"enemy.16"
+kind = "enemy"
+definition_id = &"enemy.boss_ruins"
+properties = {
+&"index": 16
+}

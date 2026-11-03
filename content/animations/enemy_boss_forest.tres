@@ -1,0 +1,73 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="Script" path="res://scripts/presentation/animation_clip.gd" id="1_qer4b"]
+[ext_resource type="Texture2D" path="res://assets/bosses.png" id="2_qgvty"]
+[ext_resource type="Script" path="res://scripts/presentation/animation_profile.gd" id="3_shbe2"]
+
+[sub_resource type="Resource" id="Resource_agqui"]
+script = ExtResource("1_qer4b")
+state = &"idle"
+texture = ExtResource("2_qgvty")
+grid = Vector2i(3, 2)
+directional = false
+frames = PackedInt32Array(0)
+durations = PackedFloat32Array(0.12)
+mirror_left = true
+
+[sub_resource type="Resource" id="Resource_4rid3"]
+script = ExtResource("1_qer4b")
+state = &"walk"
+texture = ExtResource("2_qgvty")
+grid = Vector2i(3, 2)
+directional = false
+frames = PackedInt32Array(0)
+durations = PackedFloat32Array(0.12)
+mirror_left = true
+
+[sub_resource type="Resource" id="Resource_p68qv"]
+script = ExtResource("1_qer4b")
+state = &"prepare"
+texture = ExtResource("2_qgvty")
+grid = Vector2i(3, 2)
+directional = false
+frames = PackedInt32Array(1)
+durations = PackedFloat32Array(0.12)
+mirror_left = true
+
+[sub_resource type="Resource" id="Resource_21cso"]
+script = ExtResource("1_qer4b")
+state = &"attack"
+texture = ExtResource("2_qgvty")
+grid = Vector2i(3, 2)
+directional = false
+frames = PackedInt32Array(2)
+durations = PackedFloat32Array(0.12)
+mirror_left = true
+
+[sub_resource type="Resource" id="Resource_yoija"]
+script = ExtResource("1_qer4b")
+state = &"recover"
+texture = ExtResource("2_qgvty")
+grid = Vector2i(3, 2)
+directional = false
+frames = PackedInt32Array(0)
+durations = PackedFloat32Array(0.12)
+mirror_left = true
+
+[sub_resource type="Resource" id="Resource_34ue8"]
+script = ExtResource("1_qer4b")
+state = &"dead"
+texture = ExtResource("2_qgvty")
+grid = Vector2i(3, 2)
+directional = false
+frames = PackedInt32Array(0)
+durations = PackedFloat32Array(0.12)
+mirror_left = true
+
+[resource]
+script = ExtResource("3_shbe2")
+id = &"animation.enemy.boss_forest"
+display_size = Vector2(150, 150)
+foot_anchor = Vector2(0.5, 0.9066667)
+enemy_impact_threshold = 0.3
+clips = Array[Resource]([SubResource("Resource_agqui"), SubResource("Resource_4rid3"), SubResource("Resource_p68qv"), SubResource("Resource_21cso"), SubResource("Resource_yoija"), SubResource("Resource_34ue8")])

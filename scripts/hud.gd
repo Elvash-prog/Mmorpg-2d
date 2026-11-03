@@ -310,8 +310,8 @@ func _draw() -> void:
 	var map_rect := Rect2(982, 46, 146, 88)
 	var local: Dictionary = world.players.get(multiplayer.get_unique_id(),{})
 	var area := maxi(0,Realm.area_at(local.pos)) if not local.is_empty() else 0
-	var maps: Array[Texture2D] = [world.MAP_TEXTURE,world.visuals.FOREST,world.visuals.RUINS]
-	draw_texture_rect(maps[area],map_rect,false)
+	draw_texture_rect(Realm.Maps.background_texture(area),map_rect,false)
+	Realm.Maps.draw_minimap_overlays(self,world.map_layers.get_child(area),map_rect)
 	for monster in world.monsters:
 		if monster.hp > 0 and Realm.area_at(monster.pos) == area:
 			draw_rect(Rect2(_map_position(monster.pos, map_rect) - Vector2(2, 2), Vector2(4, 4)), [Color("c4dd7c"),Color("e9b68a"),Color("a4d7ea"),Color("ef9da8"),Color("c8a4fb")][monster.kind])
@@ -333,25 +333,7 @@ func _map_position(pos: Vector2, rect: Rect2) -> Vector2:
 	return rect.position + ratio.clamp(Vector2.ZERO, Vector2.ONE) * rect.size
 
 func _build_network_panel() -> void:
-	network_panel = _panel(self, Rect2(350, 210, 452, 245))
-	network_panel.visible = false
-	_label(network_panel, "PARTIDA EM REDE LOCAL", Vector2(22, 18), 19, Color("efd99e"))
-	_label(network_panel, "Hospede ou informe o IP do anfitrião.", Vector2(22, 55), 15, Color("ddd8c8"))
-	address = LineEdit.new()
-	address.position = Vector2(22, 90)
-	address.size = Vector2(405, 42)
-	address.text = "127.0.0.1"
-	address.placeholder_text = "IP do anfitrião"
-	address.add_theme_stylebox_override("normal", _style(Color("182724"), Color("7b8468")))
-	network_panel.add_child(address)
-	host_button = _button(network_panel, "Hospedar", Rect2(22, 148, 195, 42))
-	host_button.pressed.connect(func(): world._host(); network_panel.hide())
-	join_button = _button(network_panel, "Conectar", Rect2(231, 148, 195, 42))
-	join_button.pressed.connect(func(): world._join(); network_panel.hide())
-	_label(network_panel, "UDP 24567  ·  Progresso temporário", Vector2(22, 210), 13, Color("b1bea9"))
-	var close := _button(network_panel, "×", Rect2(402, 12, 32, 32))
-	close.pressed.connect(func(): network_panel.hide())
-
+	preload("res://scripts/presentation/panel_scenes.gd").build(self,"network")
 
 func _style(fill: Color, border := Color("a38b58")) -> StyleBoxFlat:
 	var style := StyleBoxFlat.new()

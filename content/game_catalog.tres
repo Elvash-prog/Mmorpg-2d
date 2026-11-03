@@ -1,0 +1,786 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="Script" path="res://scripts/content/content_entry.gd" id="1_fsbc5"]
+[ext_resource type="Script" path="res://scripts/content/content_catalog.gd" id="2_7qcd7"]
+
+[sub_resource type="Resource" id="Resource_6igit"]
+script = ExtResource("1_fsbc5")
+id = &"class.warrior"
+data = {
+&"animation_id": &"animation.hero.warrior",
+"color": Color(0.91764706, 0.78039217, 0.4745098, 1),
+"hp": 140.0,
+"index": 0,
+"mana": 80.0,
+"name": "Guerreiro"
+}
+
+[sub_resource type="Resource" id="Resource_apken"]
+script = ExtResource("1_fsbc5")
+id = &"skill.warrior.cut"
+category = "skill"
+data = {
+"cd": 0.65,
+&"class_id": &"class.warrior",
+"cost": 0,
+"desc": "Golpe no alvo próximo.",
+"kind": "melee",
+"name": "Corte",
+"power": 24,
+"range": 82.0,
+&"short_name": "Corte",
+&"slot": 0
+}
+
+[sub_resource type="Resource" id="Resource_wut8o"]
+script = ExtResource("1_fsbc5")
+id = &"skill.warrior.whirlwind"
+category = "skill"
+data = {
+"cd": 4.0,
+&"class_id": &"class.warrior",
+"cost": 18,
+"desc": "Atinge todos os inimigos ao redor.",
+"kind": "whirl",
+"name": "Redemoinho",
+"power": 30,
+"range": 105.0,
+&"short_name": "Giro",
+&"slot": 1
+}
+
+[sub_resource type="Resource" id="Resource_8dgmw"]
+script = ExtResource("1_fsbc5")
+id = &"skill.warrior.charge"
+category = "skill"
+data = {
+"cd": 6.0,
+&"class_id": &"class.warrior",
+"cost": 20,
+"desc": "Avança até o alvo; obstáculos bloqueiam o avanço.",
+"kind": "charge",
+"name": "Investida",
+"power": 32,
+"range": 195.0,
+&"short_name": "Investida",
+&"slot": 2
+}
+
+[sub_resource type="Resource" id="Resource_4a58h"]
+script = ExtResource("1_fsbc5")
+id = &"skill.warrior.wall"
+category = "skill"
+data = {
+"cd": 9.0,
+&"class_id": &"class.warrior",
+"cost": 20,
+"desc": "Absorve 50 de dano por até 5 s.",
+"kind": "shield",
+"name": "Muralha",
+"power": 50,
+"range": 0.0,
+&"short_name": "Muralha",
+&"slot": 3
+}
+
+[sub_resource type="Resource" id="Resource_75k0c"]
+script = ExtResource("1_fsbc5")
+id = &"skill.warrior.breath"
+category = "skill"
+data = {
+"cd": 12.0,
+&"class_id": &"class.warrior",
+"cost": 25,
+"desc": "Recupera 48 de vida.",
+"kind": "heal",
+"name": "Fôlego",
+"power": 48,
+"range": 0.0,
+&"short_name": "Fôlego",
+&"slot": 4
+}
+
+[sub_resource type="Resource" id="Resource_fkke1"]
+script = ExtResource("1_fsbc5")
+id = &"class.mage"
+data = {
+&"animation_id": &"animation.hero.mage",
+"color": Color(0.7411765, 0.6039216, 0.9372549, 1),
+"hp": 90.0,
+"index": 1,
+"mana": 120.0,
+"name": "Maga"
+}
+
+[sub_resource type="Resource" id="Resource_wi5cj"]
+script = ExtResource("1_fsbc5")
+id = &"skill.mage.spark"
+category = "skill"
+data = {
+"cd": 0.8,
+&"class_id": &"class.mage",
+"cost": 0,
+"desc": "Projétil arcano; pode ser bloqueado pelo cenário.",
+"kind": "bolt",
+"name": "Faísca",
+"power": 20,
+"range": 310.0,
+&"short_name": "Faísca",
+&"slot": 0
+}
+
+[sub_resource type="Resource" id="Resource_42r72"]
+script = ExtResource("1_fsbc5")
+id = &"skill.mage.fireball"
+category = "skill"
+data = {
+"cd": 4.0,
+&"class_id": &"class.mage",
+"cost": 22,
+"desc": "Explode no impacto em uma área de 80 px.",
+"kind": "fire",
+"name": "Bola de fogo",
+"power": 38,
+"range": 310.0,
+&"short_name": "Fogo",
+&"slot": 1
+}
+
+[sub_resource type="Resource" id="Resource_nbour"]
+script = ExtResource("1_fsbc5")
+id = &"skill.mage.frost_nova"
+category = "skill"
+data = {
+"cd": 6.0,
+&"class_id": &"class.mage",
+"cost": 24,
+"desc": "Dano ao redor e lentidão de 3 s.",
+"kind": "frost",
+"name": "Nova de gelo",
+"power": 22,
+"range": 140.0,
+&"short_name": "Gelo",
+&"slot": 2
+}
+
+[sub_resource type="Resource" id="Resource_m8va5"]
+script = ExtResource("1_fsbc5")
+id = &"skill.mage.barrier"
+category = "skill"
+data = {
+"cd": 10.0,
+&"class_id": &"class.mage",
+"cost": 20,
+"desc": "Escudo arcano de 42 pontos por até 5 s.",
+"kind": "shield",
+"name": "Barreira",
+"power": 42,
+"range": 0.0,
+&"short_name": "Barreira",
+&"slot": 3
+}
+
+[sub_resource type="Resource" id="Resource_q0734"]
+script = ExtResource("1_fsbc5")
+id = &"skill.mage.storm"
+category = "skill"
+data = {
+"cd": 11.0,
+&"class_id": &"class.mage",
+"cost": 36,
+"desc": "Quatro pulsos de dano no local do alvo.",
+"kind": "storm",
+"name": "Tempestade",
+"power": 16,
+"range": 300.0,
+&"short_name": "Tempestade",
+&"slot": 4
+}
+
+[sub_resource type="Resource" id="Resource_8dpj1"]
+script = ExtResource("1_fsbc5")
+id = &"class.ranger"
+data = {
+&"animation_id": &"animation.hero.ranger",
+"color": Color(0.5568628, 0.83137256, 0.627451, 1),
+"hp": 110.0,
+"index": 2,
+"mana": 90.0,
+"name": "Patrulheira"
+}
+
+[sub_resource type="Resource" id="Resource_446j6"]
+script = ExtResource("1_fsbc5")
+id = &"skill.ranger.arrow"
+category = "skill"
+data = {
+"cd": 0.75,
+&"class_id": &"class.ranger",
+"cost": 0,
+"desc": "Flecha rápida contra um alvo.",
+"kind": "arrow",
+"name": "Flecha",
+"power": 22,
+"range": 350.0,
+&"short_name": "Flecha",
+&"slot": 0
+}
+
+[sub_resource type="Resource" id="Resource_hxa3j"]
+script = ExtResource("1_fsbc5")
+id = &"skill.ranger.double_shot"
+category = "skill"
+data = {
+"cd": 3.0,
+&"class_id": &"class.ranger",
+"cost": 15,
+"desc": "Dispara duas flechas com pequeno intervalo.",
+"kind": "double",
+"name": "Tiro duplo",
+"power": 17,
+"range": 350.0,
+&"short_name": "Duplo",
+&"slot": 1
+}
+
+[sub_resource type="Resource" id="Resource_h0117"]
+script = ExtResource("1_fsbc5")
+id = &"skill.ranger.arrow_rain"
+category = "skill"
+data = {
+"cd": 8.0,
+&"class_id": &"class.ranger",
+"cost": 28,
+"desc": "Três ondas de flechas em uma área.",
+"kind": "rain",
+"name": "Chuva",
+"power": 18,
+"range": 320.0,
+&"short_name": "Chuva",
+&"slot": 2
+}
+
+[sub_resource type="Resource" id="Resource_k6ja4"]
+script = ExtResource("1_fsbc5")
+id = &"skill.ranger.trap"
+category = "skill"
+data = {
+"cd": 7.0,
+&"class_id": &"class.ranger",
+"cost": 18,
+"desc": "Arma uma zona por 8 s; prende um inimigo por 2 s.",
+"kind": "trap",
+"name": "Armadilha",
+"power": 26,
+"range": 220.0,
+&"short_name": "Armadilha",
+&"slot": 3
+}
+
+[sub_resource type="Resource" id="Resource_k8aac"]
+script = ExtResource("1_fsbc5")
+id = &"skill.ranger.evasion"
+category = "skill"
+data = {
+"cd": 6.0,
+&"class_id": &"class.ranger",
+"cost": 12,
+"desc": "Recua sem atravessar obstáculos e esquiva por 1,2 s.",
+"kind": "evade",
+"name": "Passo evasivo",
+"power": 0,
+"range": 0.0,
+&"short_name": "Esquiva",
+&"slot": 4
+}
+
+[sub_resource type="Resource" id="Resource_ggcfs"]
+script = ExtResource("1_fsbc5")
+id = &"item.training_sword"
+category = "item"
+data = {
+"armor": 0,
+&"class_id": &"class.warrior",
+"crit": 0.0,
+"hp": 0,
+"lore": "Toda jornada começa com uma lâmina simples.",
+"mana": 0,
+"name": "Espada de aprendiz",
+"power": 0,
+"rarity": 0,
+"slot": "weapon",
+"speed": 0
+}
+
+[sub_resource type="Resource" id="Resource_6lh7n"]
+script = ExtResource("1_fsbc5")
+id = &"item.training_staff"
+category = "item"
+data = {
+"armor": 0,
+&"class_id": &"class.mage",
+"crit": 0.0,
+"hp": 0,
+"lore": "Uma pedra azul, uma promessa de luz.",
+"mana": 0,
+"name": "Cajado de aprendiz",
+"power": 0,
+"rarity": 0,
+"slot": "weapon",
+"speed": 0
+}
+
+[sub_resource type="Resource" id="Resource_xsrsi"]
+script = ExtResource("1_fsbc5")
+id = &"item.training_bow"
+category = "item"
+data = {
+"armor": 0,
+&"class_id": &"class.ranger",
+"crit": 0.0,
+"hp": 0,
+"lore": "A corda ainda guarda o cheiro da floresta.",
+"mana": 0,
+"name": "Arco de aprendiz",
+"power": 0,
+"rarity": 0,
+"slot": "weapon",
+"speed": 0
+}
+
+[sub_resource type="Resource" id="Resource_71b8l"]
+script = ExtResource("1_fsbc5")
+id = &"item.travel_coat"
+category = "item"
+data = {
+"armor": 2,
+&"class_id": &"",
+"crit": 0.0,
+"hp": 12,
+"lore": "Deixado por Lia para quem se atreve a partir.",
+"mana": 0,
+"name": "Casaco do viajante",
+"power": 0,
+"rarity": 0,
+"slot": "armor",
+"speed": 0
+}
+
+[sub_resource type="Resource" id="Resource_w2p7q"]
+script = ExtResource("1_fsbc5")
+id = &"item.linen_vest"
+category = "item"
+data = {
+"armor": 3,
+&"class_id": &"",
+"crit": 0.0,
+"hp": 18,
+"lore": "Fibras recuperadas entre os cristais de um limo.",
+"mana": 0,
+"name": "Colete de fibras vivas",
+"power": 0,
+"rarity": 1,
+"slot": "armor",
+"speed": 0
+}
+
+[sub_resource type="Resource" id="Resource_plfl4"]
+script = ExtResource("1_fsbc5")
+id = &"item.trail_boots"
+category = "item"
+data = {
+"armor": 1,
+&"class_id": &"",
+"crit": 0.0,
+"hp": 0,
+"lore": "A trilha é mais curta para pés que a conhecem.",
+"mana": 0,
+"name": "Botas do batedor",
+"power": 0,
+"rarity": 1,
+"slot": "boots",
+"speed": 14
+}
+
+[sub_resource type="Resource" id="Resource_g0u3b"]
+script = ExtResource("1_fsbc5")
+id = &"item.steel_sword"
+category = "item"
+data = {
+"armor": 1,
+&"class_id": &"class.warrior",
+"crit": 0.05,
+"hp": 0,
+"lore": "Forjada antes de o juramento ser esquecido.",
+"mana": 0,
+"name": "Lâmina do juramento",
+"power": 7,
+"rarity": 2,
+"slot": "weapon",
+"speed": 0
+}
+
+[sub_resource type="Resource" id="Resource_3aabr"]
+script = ExtResource("1_fsbc5")
+id = &"item.crystal_staff"
+category = "item"
+data = {
+"armor": 0,
+&"class_id": &"class.mage",
+"crit": 0.05,
+"hp": 0,
+"lore": "O cristal responde à mesma nota da fonte.",
+"mana": 16,
+"name": "Cajado da ressonância",
+"power": 7,
+"rarity": 2,
+"slot": "weapon",
+"speed": 0
+}
+
+[sub_resource type="Resource" id="Resource_16idu"]
+script = ExtResource("1_fsbc5")
+id = &"item.longbow"
+category = "item"
+data = {
+"armor": 0,
+&"class_id": &"class.ranger",
+"crit": 0.08,
+"hp": 0,
+"lore": "Seu antigo dono jamais abandonou a muralha.",
+"mana": 0,
+"name": "Arco da vigília",
+"power": 7,
+"rarity": 2,
+"slot": "weapon",
+"speed": 4
+}
+
+[sub_resource type="Resource" id="Resource_io6bd"]
+script = ExtResource("1_fsbc5")
+id = &"item.amber_charm"
+category = "item"
+data = {
+"armor": 0,
+&"class_id": &"",
+"crit": 0.0,
+"hp": 10,
+"lore": "Dentro dele, uma folha cai para sempre.",
+"mana": 18,
+"name": "Âmbar dos ecos",
+"power": 4,
+"rarity": 2,
+"slot": "amulet",
+"speed": 0
+}
+
+[sub_resource type="Resource" id="Resource_m0vy6"]
+script = ExtResource("1_fsbc5")
+id = &"item.runic_coat"
+category = "item"
+data = {
+"armor": 7,
+&"class_id": &"",
+"crit": 0.0,
+"hp": 30,
+"lore": "As runas resistiram ao tempo. O tecido, também.",
+"mana": 10,
+"name": "Manto das ruínas",
+"power": 2,
+"rarity": 2,
+"slot": "armor",
+"speed": 0
+}
+
+[sub_resource type="Resource" id="Resource_3clnx"]
+script = ExtResource("1_fsbc5")
+id = &"item.verdant_heart"
+category = "item"
+data = {
+"armor": 2,
+&"class_id": &"",
+"crit": 0.03,
+"hp": 35,
+"lore": "A Matriarca não era a origem da corrupção. Era sua primeira vítima.",
+"mana": 20,
+"name": "Coração do bosque",
+"power": 6,
+"rarity": 3,
+"slot": "amulet",
+"speed": 0
+}
+
+[sub_resource type="Resource" id="Resource_38p53"]
+script = ExtResource("1_fsbc5")
+id = &"item.dawn_crown"
+category = "item"
+data = {
+"armor": 12,
+&"class_id": &"",
+"crit": 0.0,
+"hp": 60,
+"lore": "O Arconte guardou a armadura. Você guardará o juramento.",
+"mana": 12,
+"name": "Armadura da aurora",
+"power": 4,
+"rarity": 3,
+"slot": "armor",
+"speed": 0
+}
+
+[sub_resource type="Resource" id="Resource_56mcm"]
+script = ExtResource("1_fsbc5")
+id = &"item.dawn_sigil"
+category = "item"
+data = {
+"armor": 3,
+&"class_id": &"",
+"crit": 0.06,
+"hp": 30,
+"lore": "Não promete que a noite acabará. Promete que alguém continuará a acender a luz.",
+"mana": 30,
+"name": "Selo da última aurora",
+"power": 10,
+"rarity": 4,
+"slot": "amulet",
+"speed": 5
+}
+
+[sub_resource type="Resource" id="Resource_rcujh"]
+script = ExtResource("1_fsbc5")
+id = &"quest.slime"
+category = "quest"
+data = {
+"goal": 3,
+"gold": 30,
+&"index": 0,
+"key": "slime",
+"text": "Derrote 3 limos verdes.",
+"title": "Primeiros passos",
+"xp": 70
+}
+
+[sub_resource type="Resource" id="Resource_s4wcr"]
+script = ExtResource("1_fsbc5")
+id = &"quest.wolf"
+category = "quest"
+data = {
+"goal": 2,
+"gold": 50,
+&"index": 1,
+"key": "wolf",
+"text": "Derrote 2 lobos cinzentos.",
+"title": "Uivos no vale",
+"xp": 100
+}
+
+[sub_resource type="Resource" id="Resource_pwl4o"]
+script = ExtResource("1_fsbc5")
+id = &"quest.golem"
+category = "quest"
+data = {
+"goal": 1,
+"gold": 75,
+&"index": 2,
+"key": "golem",
+"text": "Derrote uma sentinela de pedra.",
+"title": "Pedra desperta",
+"xp": 150
+}
+
+[sub_resource type="Resource" id="Resource_acky6"]
+script = ExtResource("1_fsbc5")
+id = &"quest.herbs"
+category = "quest"
+data = {
+"goal": 3,
+"gold": 40,
+&"index": 3,
+"key": "herbs",
+"text": "Colete as 3 ervas luminosas usando F.",
+"title": "Ervas do curandeiro",
+"xp": 75
+}
+
+[sub_resource type="Resource" id="Resource_6kq11"]
+script = ExtResource("1_fsbc5")
+id = &"quest.visit"
+category = "quest"
+data = {
+"goal": 1,
+"gold": 25,
+&"index": 4,
+"key": "visit",
+"text": "Visite o marco azul a sudeste.",
+"title": "Explorador do vale",
+"xp": 50
+}
+
+[sub_resource type="Resource" id="Resource_ryjio"]
+script = ExtResource("1_fsbc5")
+id = &"quest.forest_beacon"
+category = "quest"
+data = {
+"goal": 1,
+"gold": 50,
+&"index": 5,
+"key": "forest_beacon",
+"requires": &"quest.visit",
+"text": "Toque o santuário no Bosque dos Ecos. Descubra o que feriu a Matriarca.",
+"title": "A memória das raízes",
+"xp": 100
+}
+
+[sub_resource type="Resource" id="Resource_ojfyb"]
+script = ExtResource("1_fsbc5")
+id = &"quest.boss_forest"
+category = "quest"
+data = {
+"goal": 1,
+"gold": 100,
+&"index": 6,
+"key": "boss_forest",
+"requires": &"quest.forest_beacon",
+"text": "Liberte a Matriarca na clareira. Evite espinhos e esporos.",
+"title": "Um coração sob os espinhos",
+"xp": 200
+}
+
+[sub_resource type="Resource" id="Resource_0d0kg"]
+script = ExtResource("1_fsbc5")
+id = &"quest.ruins_beacon"
+category = "quest"
+data = {
+"goal": 1,
+"gold": 70,
+&"index": 7,
+"key": "ruins_beacon",
+"requires": &"quest.boss_forest",
+"text": "Ouça a memória de Íria na Cidadela do Ocaso.",
+"title": "O primeiro juramento",
+"xp": 140
+}
+
+[sub_resource type="Resource" id="Resource_myueb"]
+script = ExtResource("1_fsbc5")
+id = &"quest.boss_ruins"
+category = "quest"
+data = {
+"goal": 1,
+"gold": 160,
+&"index": 8,
+"key": "boss_ruins",
+"requires": &"quest.ruins_beacon",
+"text": "Vença o Arconte. Quebre os pilares para remover seu escudo.",
+"title": "A luz aprisionada",
+"xp": 300
+}
+
+[sub_resource type="Resource" id="Resource_cvp60"]
+script = ExtResource("1_fsbc5")
+id = &"quest.restore"
+category = "quest"
+data = {
+"goal": 1,
+"gold": 200,
+&"index": 9,
+"key": "restore",
+"requires": &"quest.boss_ruins",
+"text": "Volte à fonte e reúna as duas ressonâncias com F. Entregue a missão a Lia.",
+"title": "A próxima manhã",
+"xp": 300
+}
+
+[sub_resource type="Resource" id="Resource_1ud6o"]
+script = ExtResource("1_fsbc5")
+id = &"enemy.slime"
+category = "enemy"
+data = {
+&"animation_id": &"animation.enemy.slime",
+"damage": 9.0,
+"hp": 65.0,
+&"index": 0,
+"key": "slime",
+"name": "Limo verde",
+"radius": 36.0,
+"reach": 35.0,
+"speed": 58.0,
+"windup": 0.4,
+"xp": 25
+}
+
+[sub_resource type="Resource" id="Resource_oayub"]
+script = ExtResource("1_fsbc5")
+id = &"enemy.wolf"
+category = "enemy"
+data = {
+&"animation_id": &"animation.enemy.wolf",
+"damage": 14.0,
+"hp": 95.0,
+&"index": 1,
+"key": "wolf",
+"name": "Lobo cinzento",
+"radius": 44.0,
+"reach": 43.0,
+"speed": 90.0,
+"windup": 0.5,
+"xp": 40
+}
+
+[sub_resource type="Resource" id="Resource_lfkmi"]
+script = ExtResource("1_fsbc5")
+id = &"enemy.golem"
+category = "enemy"
+data = {
+&"animation_id": &"animation.enemy.golem",
+"damage": 26.0,
+"hp": 210.0,
+&"index": 2,
+"key": "golem",
+"name": "Sentinela de pedra",
+"radius": 68.0,
+"reach": 65.0,
+"speed": 40.0,
+"windup": 0.9,
+"xp": 85
+}
+
+[sub_resource type="Resource" id="Resource_a6uv2"]
+script = ExtResource("1_fsbc5")
+id = &"enemy.boss_forest"
+category = "enemy"
+data = {
+&"animation_id": &"animation.enemy.boss_forest",
+"damage": 20.0,
+"hp": 950.0,
+&"index": 3,
+"key": "boss_forest",
+"name": "Matriarca dos Espinhos",
+"radius": 90.0,
+"reach": 110.0,
+"speed": 65.0,
+"windup": 1.1,
+"xp": 240
+}
+
+[sub_resource type="Resource" id="Resource_pw6p1"]
+script = ExtResource("1_fsbc5")
+id = &"enemy.boss_ruins"
+category = "enemy"
+data = {
+&"animation_id": &"animation.enemy.boss_ruins",
+"damage": 28.0,
+"hp": 1350.0,
+&"index": 4,
+"key": "boss_ruins",
+"name": "Arconte do Ocaso",
+"radius": 210.0,
+"reach": 120.0,
+"speed": 50.0,
+"windup": 1.3,
+"xp": 350
+}
+
+[resource]
+script = ExtResource("2_7qcd7")
+entries = Array[Resource]([SubResource("Resource_6igit"), SubResource("Resource_apken"), SubResource("Resource_wut8o"), SubResource("Resource_8dgmw"), SubResource("Resource_4a58h"), SubResource("Resource_75k0c"), SubResource("Resource_fkke1"), SubResource("Resource_wi5cj"), SubResource("Resource_42r72"), SubResource("Resource_nbour"), SubResource("Resource_m8va5"), SubResource("Resource_q0734"), SubResource("Resource_8dpj1"), SubResource("Resource_446j6"), SubResource("Resource_hxa3j"), SubResource("Resource_h0117"), SubResource("Resource_k6ja4"), SubResource("Resource_k8aac"), SubResource("Resource_ggcfs"), SubResource("Resource_6lh7n"), SubResource("Resource_xsrsi"), SubResource("Resource_71b8l"), SubResource("Resource_w2p7q"), SubResource("Resource_plfl4"), SubResource("Resource_g0u3b"), SubResource("Resource_3aabr"), SubResource("Resource_16idu"), SubResource("Resource_io6bd"), SubResource("Resource_m0vy6"), SubResource("Resource_3clnx"), SubResource("Resource_38p53"), SubResource("Resource_56mcm"), SubResource("Resource_rcujh"), SubResource("Resource_s4wcr"), SubResource("Resource_pwl4o"), SubResource("Resource_acky6"), SubResource("Resource_6kq11"), SubResource("Resource_ryjio"), SubResource("Resource_ojfyb"), SubResource("Resource_0d0kg"), SubResource("Resource_myueb"), SubResource("Resource_cvp60"), SubResource("Resource_1ud6o"), SubResource("Resource_oayub"), SubResource("Resource_lfkmi"), SubResource("Resource_a6uv2"), SubResource("Resource_pw6p1")])

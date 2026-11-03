@@ -1,0 +1,69 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="Script" path="res://scripts/presentation/animation_clip.gd" id="1_ll26s"]
+[ext_resource type="Texture2D" path="res://assets/mage_walk.png" id="2_3vucl"]
+[ext_resource type="Texture2D" path="res://assets/class_actions.png" id="3_t34ph"]
+[ext_resource type="Script" path="res://scripts/presentation/animation_profile.gd" id="4_3mses"]
+
+[sub_resource type="Resource" id="Resource_5xf71"]
+script = ExtResource("1_ll26s")
+state = &"idle"
+texture = ExtResource("2_3vucl")
+frames = PackedInt32Array(0)
+durations = PackedFloat32Array(0.12)
+
+[sub_resource type="Resource" id="Resource_ec620"]
+script = ExtResource("1_ll26s")
+state = &"walk"
+texture = ExtResource("2_3vucl")
+frames = PackedInt32Array(0, 1, 2, 3)
+durations = PackedFloat32Array(0.125, 0.125, 0.125, 0.125)
+distance_per_frame = 12.0
+
+[sub_resource type="Resource" id="Resource_rp8xb"]
+script = ExtResource("1_ll26s")
+state = &"dead"
+texture = ExtResource("2_3vucl")
+frames = PackedInt32Array(0)
+durations = PackedFloat32Array(0.12)
+
+[sub_resource type="Resource" id="Resource_p7o3r"]
+script = ExtResource("1_ll26s")
+state = &"prepare"
+texture = ExtResource("3_t34ph")
+grid = Vector2i(4, 3)
+row = 1
+directional = false
+frames = PackedInt32Array(1)
+durations = PackedFloat32Array(0.15)
+loop = false
+mirror_left = true
+
+[sub_resource type="Resource" id="Resource_tl7va"]
+script = ExtResource("1_ll26s")
+state = &"attack"
+texture = ExtResource("3_t34ph")
+grid = Vector2i(4, 3)
+row = 1
+directional = false
+frames = PackedInt32Array(2)
+durations = PackedFloat32Array(0.12)
+loop = false
+mirror_left = true
+
+[sub_resource type="Resource" id="Resource_mhxae"]
+script = ExtResource("1_ll26s")
+state = &"recover"
+texture = ExtResource("3_t34ph")
+grid = Vector2i(4, 3)
+row = 1
+directional = false
+frames = PackedInt32Array(3)
+durations = PackedFloat32Array(0.21)
+loop = false
+mirror_left = true
+
+[resource]
+script = ExtResource("4_3mses")
+id = &"animation.hero.mage"
+clips = Array[Resource]([SubResource("Resource_5xf71"), SubResource("Resource_ec620"), SubResource("Resource_rp8xb"), SubResource("Resource_p7o3r"), SubResource("Resource_tl7va"), SubResource("Resource_mhxae")])

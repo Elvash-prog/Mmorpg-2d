@@ -1,0 +1,522 @@
+[gd_scene format=3]
+
+[ext_resource type="Texture2D" path="res://assets/guardian.png" id="1_74laj"]
+[ext_resource type="Texture2D" path="res://assets/mage_walk.png" id="2_wcnfv"]
+[ext_resource type="Texture2D" path="res://assets/ranger_walk.png" id="3_cokyc"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qn4bn"]
+bg_color = Color(0.055, 0.09, 0.13, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.6392157, 0.54509807, 0.34509805, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_s2sg6"]
+bg_color = Color(0.13725491, 0.20392157, 0.2509804, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.6392157, 0.54509807, 0.34509805, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rnhd6"]
+bg_color = Color(0.4, 0.3529412, 0.22352941, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.89411765, 0.654902, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5gq6j"]
+bg_color = Color(0.20392157, 0.3137255, 0.3529412, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.9372549, 0.81960785, 0.54901963, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hq0su"]
+bg_color = Color(0.1254902, 0.16470589, 0.15686275, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.42745098, 0.44313726, 0.34509805, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yww2y"]
+bg_color = Color(0.17254902, 0.25490198, 0.28235295, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.91764706, 0.78039217, 0.4745098, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kfvin"]
+bg_color = Color(0.4, 0.3529412, 0.22352941, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.89411765, 0.654902, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lrmdy"]
+bg_color = Color(0.20392157, 0.3137255, 0.3529412, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.9372549, 0.81960785, 0.54901963, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_m1chw"]
+bg_color = Color(0.1254902, 0.16470589, 0.15686275, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.42745098, 0.44313726, 0.34509805, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_87qib"]
+bg_color = Color(0.105882354, 0.18039216, 0.22352941, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.4117647, 0.47843137, 0.49019608, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ekgfp"]
+bg_color = Color(0.4, 0.3529412, 0.22352941, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.89411765, 0.654902, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_voqw3"]
+bg_color = Color(0.20392157, 0.3137255, 0.3529412, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.9372549, 0.81960785, 0.54901963, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sj1yl"]
+bg_color = Color(0.1254902, 0.16470589, 0.15686275, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.42745098, 0.44313726, 0.34509805, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2hy6w"]
+bg_color = Color(0.105882354, 0.18039216, 0.22352941, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.4117647, 0.47843137, 0.49019608, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_48u5h"]
+bg_color = Color(0.4, 0.3529412, 0.22352941, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.89411765, 0.654902, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_l6nph"]
+bg_color = Color(0.20392157, 0.3137255, 0.3529412, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.9372549, 0.81960785, 0.54901963, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sdbqt"]
+bg_color = Color(0.1254902, 0.16470589, 0.15686275, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.42745098, 0.44313726, 0.34509805, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[node name="Classes" type="Panel" unique_id=776872051]
+visible = false
+layout_mode = 0
+offset_left = 150.0
+offset_top = 105.0
+offset_right = 1002.0
+offset_bottom = 605.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_qn4bn")
+
+[node name="@Label@79" type="Label" parent="." unique_id=1083588805]
+layout_mode = 0
+offset_left = 28.0
+offset_top = 20.0
+offset_right = 28.0
+offset_bottom = 20.0
+theme_override_colors/font_color = Color(0.654902, 0.7254902, 0.7411765, 1)
+theme_override_colors/font_outline_color = Color(0.09411765, 0.12941177, 0.11372549, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 11
+text = "IDENTIDADE / ESTILO DE COMBATE"
+
+[node name="@Label@80" type="Label" parent="." unique_id=1921218811]
+layout_mode = 0
+offset_left = 28.0
+offset_top = 41.0
+offset_right = 28.0
+offset_bottom = 41.0
+theme_override_colors/font_color = Color(0.9529412, 0.8745098, 0.6784314, 1)
+theme_override_colors/font_outline_color = Color(0.09411765, 0.12941177, 0.11372549, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 26
+text = "Seu caminho na Aurora"
+
+[node name="@Label@81" type="Label" parent="." unique_id=1397802659]
+layout_mode = 0
+offset_left = 28.0
+offset_top = 80.0
+offset_right = 28.0
+offset_bottom = 80.0
+theme_override_colors/font_color = Color(0.72156864, 0.79607844, 0.8156863, 1)
+theme_override_colors/font_outline_color = Color(0.09411765, 0.12941177, 0.11372549, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 13
+text = "A troca é livre junto à fonte e fora de combate. O equipamento é preservado."
+
+[node name="Close" type="Button" parent="." unique_id=265124942]
+layout_mode = 0
+offset_left = 800.0
+offset_top = 18.0
+offset_right = 832.0
+offset_bottom = 50.0
+focus_mode = 0
+theme_override_colors/font_color = Color(1, 0.9019608, 0.6745098, 1)
+theme_override_colors/font_disabled_color = Color(0.57254905, 0.5803922, 0.49803922, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_s2sg6")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_rnhd6")
+theme_override_styles/hover = SubResource("StyleBoxFlat_5gq6j")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_hq0su")
+text = "×"
+
+[node name="WarriorCard" type="Button" parent="." unique_id=654825969]
+layout_mode = 0
+offset_left = 26.0
+offset_top = 114.0
+offset_right = 278.0
+offset_bottom = 236.0
+focus_mode = 0
+theme_override_colors/font_color = Color(1, 0.9019608, 0.6745098, 1)
+theme_override_colors/font_disabled_color = Color(0.57254905, 0.5803922, 0.49803922, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_yww2y")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_kfvin")
+theme_override_styles/hover = SubResource("StyleBoxFlat_lrmdy")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_m1chw")
+
+[node name="@Sprite2D@84" type="Sprite2D" parent="WarriorCard" unique_id=574111518]
+position = Vector2(51, 61)
+scale = Vector2(0.29346094, 0.29346094)
+texture = ExtResource("1_74laj")
+region_enabled = true
+region_rect = Rect2(0, 0, 313.5, 313.5)
+
+[node name="ClassName" type="Label" parent="WarriorCard" unique_id=1558546804]
+layout_mode = 0
+offset_left = 100.0
+offset_top = 22.0
+offset_right = 100.0
+offset_bottom = 22.0
+theme_override_colors/font_color = Color(0.91764706, 0.78039217, 0.4745098, 1)
+theme_override_colors/font_outline_color = Color(0.09411765, 0.12941177, 0.11372549, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 18
+text = "Guerreiro"
+
+[node name="Role" type="Label" parent="WarriorCard" unique_id=1267002752]
+layout_mode = 0
+offset_left = 100.0
+offset_top = 54.0
+offset_right = 100.0
+offset_bottom = 54.0
+theme_override_colors/font_color = Color(0.7137255, 0.79607844, 0.8156863, 1)
+theme_override_colors/font_outline_color = Color(0.09411765, 0.12941177, 0.11372549, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 10
+text = "Resistência e controle"
+
+[node name="BaseStats" type="Label" parent="WarriorCard" unique_id=1000920225]
+layout_mode = 0
+offset_left = 100.0
+offset_top = 82.0
+offset_right = 100.0
+offset_bottom = 82.0
+theme_override_colors/font_color = Color(0.8509804, 0.8392157, 0.7372549, 1)
+theme_override_colors/font_outline_color = Color(0.09411765, 0.12941177, 0.11372549, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 11
+text = "140 vida · 80 EN"
+
+[node name="MageCard" type="Button" parent="." unique_id=1743024372]
+layout_mode = 0
+offset_left = 292.0
+offset_top = 114.0
+offset_right = 544.0
+offset_bottom = 236.0
+focus_mode = 0
+theme_override_colors/font_color = Color(1, 0.9019608, 0.6745098, 1)
+theme_override_colors/font_disabled_color = Color(0.57254905, 0.5803922, 0.49803922, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_87qib")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ekgfp")
+theme_override_styles/hover = SubResource("StyleBoxFlat_voqw3")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_sj1yl")
+
+[node name="@Sprite2D@89" type="Sprite2D" parent="MageCard" unique_id=1756021615]
+position = Vector2(51, 61)
+scale = Vector2(0.29346094, 0.29346094)
+texture = ExtResource("2_wcnfv")
+region_enabled = true
+region_rect = Rect2(0, 0, 313.5, 313.5)
+
+[node name="ClassName" type="Label" parent="MageCard" unique_id=968123015]
+layout_mode = 0
+offset_left = 100.0
+offset_top = 22.0
+offset_right = 100.0
+offset_bottom = 22.0
+theme_override_colors/font_color = Color(0.7411765, 0.6039216, 0.9372549, 1)
+theme_override_colors/font_outline_color = Color(0.09411765, 0.12941177, 0.11372549, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 18
+text = "Maga"
+
+[node name="Role" type="Label" parent="MageCard" unique_id=46686173]
+layout_mode = 0
+offset_left = 100.0
+offset_top = 54.0
+offset_right = 100.0
+offset_bottom = 54.0
+theme_override_colors/font_color = Color(0.7137255, 0.79607844, 0.8156863, 1)
+theme_override_colors/font_outline_color = Color(0.09411765, 0.12941177, 0.11372549, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 10
+text = "Magia e dano em área"
+
+[node name="BaseStats" type="Label" parent="MageCard" unique_id=685586656]
+layout_mode = 0
+offset_left = 100.0
+offset_top = 82.0
+offset_right = 100.0
+offset_bottom = 82.0
+theme_override_colors/font_color = Color(0.8509804, 0.8392157, 0.7372549, 1)
+theme_override_colors/font_outline_color = Color(0.09411765, 0.12941177, 0.11372549, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 11
+text = "90 vida · 120 EN"
+
+[node name="RangerCard" type="Button" parent="." unique_id=1336943385]
+layout_mode = 0
+offset_left = 558.0
+offset_top = 114.0
+offset_right = 810.0
+offset_bottom = 236.0
+focus_mode = 0
+theme_override_colors/font_color = Color(1, 0.9019608, 0.6745098, 1)
+theme_override_colors/font_disabled_color = Color(0.57254905, 0.5803922, 0.49803922, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_2hy6w")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_48u5h")
+theme_override_styles/hover = SubResource("StyleBoxFlat_l6nph")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_sdbqt")
+
+[node name="@Sprite2D@94" type="Sprite2D" parent="RangerCard" unique_id=845449516]
+position = Vector2(51, 61)
+scale = Vector2(0.29346094, 0.29346094)
+texture = ExtResource("3_cokyc")
+region_enabled = true
+region_rect = Rect2(0, 0, 313.5, 313.5)
+
+[node name="ClassName" type="Label" parent="RangerCard" unique_id=1975699625]
+layout_mode = 0
+offset_left = 100.0
+offset_top = 22.0
+offset_right = 100.0
+offset_bottom = 22.0
+theme_override_colors/font_color = Color(0.5568628, 0.83137256, 0.627451, 1)
+theme_override_colors/font_outline_color = Color(0.09411765, 0.12941177, 0.11372549, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 18
+text = "Patrulheira"
+
+[node name="Role" type="Label" parent="RangerCard" unique_id=1780089454]
+layout_mode = 0
+offset_left = 100.0
+offset_top = 54.0
+offset_right = 100.0
+offset_bottom = 54.0
+theme_override_colors/font_color = Color(0.7137255, 0.79607844, 0.8156863, 1)
+theme_override_colors/font_outline_color = Color(0.09411765, 0.12941177, 0.11372549, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 10
+text = "Precisão e mobilidade"
+
+[node name="BaseStats" type="Label" parent="RangerCard" unique_id=539494115]
+layout_mode = 0
+offset_left = 100.0
+offset_top = 82.0
+offset_right = 100.0
+offset_bottom = 82.0
+theme_override_colors/font_color = Color(0.8509804, 0.8392157, 0.7372549, 1)
+theme_override_colors/font_outline_color = Color(0.09411765, 0.12941177, 0.11372549, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 11
+text = "110 vida · 90 EN"
+
+[node name="SkillsScroll" type="ScrollContainer" parent="." unique_id=870955888]
+layout_mode = 0
+offset_left = 28.0
+offset_top = 252.0
+offset_right = 822.0
+offset_bottom = 432.0
+horizontal_scroll_mode = 0
+
+[node name="SkillDetails" type="Label" parent="SkillsScroll" unique_id=1832288258]
+custom_minimum_size = Vector2(765, 290)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.84313726, 0.8784314, 0.8509804, 1)
+theme_override_colors/font_outline_color = Color(0.09411765, 0.12941177, 0.11372549, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 14
+text = "Guerreiro · 140 vida / 80 energia
+
+1. Corte · 0 EN · 0.7s
+Golpe no alvo próximo.
+
+2. Redemoinho · 18 EN · 4.0s
+Atinge todos os inimigos ao redor.
+
+3. Investida · 20 EN · 6.0s
+Avança até o alvo; obstáculos bloqueiam o avanço.
+
+4. Muralha · 20 EN · 9.0s
+Absorve 50 de dano por até 5 s.
+
+5. Fôlego · 25 EN · 12.0s
+Recupera 48 de vida.
+
+"
+autowrap_mode = 3
+
+[node name="Feedback" type="Label" parent="." unique_id=4872351]
+layout_mode = 0
+offset_left = 28.0
+offset_top = 456.0
+offset_right = 28.0
+offset_bottom = 456.0
+theme_override_colors/font_color = Color(0.89411765, 0.80784315, 0.63529414, 1)
+theme_override_colors/font_outline_color = Color(0.09411765, 0.12941177, 0.11372549, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 12
+text = "A fonte está enfraquecendo. Fale com Lia [F] e prepare-se para partir."

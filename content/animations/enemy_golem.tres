@@ -1,0 +1,79 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="Script" path="res://scripts/presentation/animation_clip.gd" id="1_db715"]
+[ext_resource type="Texture2D" path="res://assets/enemies.png" id="2_7qm24"]
+[ext_resource type="Script" path="res://scripts/presentation/animation_profile.gd" id="3_mfmgb"]
+
+[sub_resource type="Resource" id="Resource_jdb2j"]
+script = ExtResource("1_db715")
+state = &"idle"
+texture = ExtResource("2_7qm24")
+grid = Vector2i(4, 3)
+row = 2
+directional = false
+frames = PackedInt32Array(0)
+durations = PackedFloat32Array(0.12)
+mirror_left = true
+
+[sub_resource type="Resource" id="Resource_ycquo"]
+script = ExtResource("1_db715")
+state = &"walk"
+texture = ExtResource("2_7qm24")
+grid = Vector2i(4, 3)
+row = 2
+directional = false
+frames = PackedInt32Array(0, 1)
+durations = PackedFloat32Array(0.12, 0.12)
+distance_per_frame = 13.0
+mirror_left = true
+
+[sub_resource type="Resource" id="Resource_u72jc"]
+script = ExtResource("1_db715")
+state = &"prepare"
+texture = ExtResource("2_7qm24")
+grid = Vector2i(4, 3)
+row = 2
+directional = false
+frames = PackedInt32Array(2)
+durations = PackedFloat32Array(0.12)
+mirror_left = true
+
+[sub_resource type="Resource" id="Resource_f2oux"]
+script = ExtResource("1_db715")
+state = &"attack"
+texture = ExtResource("2_7qm24")
+grid = Vector2i(4, 3)
+row = 2
+directional = false
+frames = PackedInt32Array(3)
+durations = PackedFloat32Array(0.12)
+mirror_left = true
+
+[sub_resource type="Resource" id="Resource_jqwa6"]
+script = ExtResource("1_db715")
+state = &"recover"
+texture = ExtResource("2_7qm24")
+grid = Vector2i(4, 3)
+row = 2
+directional = false
+frames = PackedInt32Array(0)
+durations = PackedFloat32Array(0.12)
+mirror_left = true
+
+[sub_resource type="Resource" id="Resource_4h6lj"]
+script = ExtResource("1_db715")
+state = &"dead"
+texture = ExtResource("2_7qm24")
+grid = Vector2i(4, 3)
+row = 2
+directional = false
+frames = PackedInt32Array(0)
+durations = PackedFloat32Array(0.12)
+mirror_left = true
+
+[resource]
+script = ExtResource("3_mfmgb")
+id = &"animation.enemy.golem"
+display_size = Vector2(96, 96)
+foot_anchor = Vector2(0.5, 0.8541667)
+clips = Array[Resource]([SubResource("Resource_jdb2j"), SubResource("Resource_ycquo"), SubResource("Resource_u72jc"), SubResource("Resource_f2oux"), SubResource("Resource_jqwa6"), SubResource("Resource_4h6lj")])

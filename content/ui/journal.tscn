@@ -1,0 +1,649 @@
+[gd_scene format=3]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dnuht"]
+bg_color = Color(0.055, 0.09, 0.13, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.6392157, 0.54509807, 0.34509805, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_spukx"]
+bg_color = Color(0.13725491, 0.20392157, 0.2509804, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.6392157, 0.54509807, 0.34509805, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3buue"]
+bg_color = Color(0.4, 0.3529412, 0.22352941, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.89411765, 0.654902, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_34og3"]
+bg_color = Color(0.20392157, 0.3137255, 0.3529412, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.9372549, 0.81960785, 0.54901963, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dy7xq"]
+bg_color = Color(0.1254902, 0.16470589, 0.15686275, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.42745098, 0.44313726, 0.34509805, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_53rip"]
+bg_color = Color(0.105882354, 0.16862746, 0.19607843, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.6392157, 0.54509807, 0.34509805, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jmaqy"]
+bg_color = Color(0.105882354, 0.16862746, 0.19607843, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.6392157, 0.54509807, 0.34509805, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fyg67"]
+bg_color = Color(0.105882354, 0.16862746, 0.19607843, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.6392157, 0.54509807, 0.34509805, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3qww1"]
+bg_color = Color(0.105882354, 0.16862746, 0.19607843, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.6392157, 0.54509807, 0.34509805, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uwwh2"]
+bg_color = Color(0.105882354, 0.16862746, 0.19607843, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.6392157, 0.54509807, 0.34509805, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mc6dr"]
+bg_color = Color(0.105882354, 0.16862746, 0.19607843, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.6392157, 0.54509807, 0.34509805, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3vc0l"]
+bg_color = Color(0.105882354, 0.16862746, 0.19607843, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.6392157, 0.54509807, 0.34509805, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pyeyo"]
+bg_color = Color(0.105882354, 0.16862746, 0.19607843, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.6392157, 0.54509807, 0.34509805, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uryfu"]
+bg_color = Color(0.105882354, 0.16862746, 0.19607843, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.6392157, 0.54509807, 0.34509805, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_11bgf"]
+bg_color = Color(0.105882354, 0.16862746, 0.19607843, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.6392157, 0.54509807, 0.34509805, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nt8g7"]
+bg_color = Color(0.13725491, 0.20392157, 0.2509804, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.6392157, 0.54509807, 0.34509805, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0or6e"]
+bg_color = Color(0.4, 0.3529412, 0.22352941, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.89411765, 0.654902, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ym44x"]
+bg_color = Color(0.20392157, 0.3137255, 0.3529412, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.9372549, 0.81960785, 0.54901963, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ukkwv"]
+bg_color = Color(0.1254902, 0.16470589, 0.15686275, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.42745098, 0.44313726, 0.34509805, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pcjg0"]
+bg_color = Color(0.13725491, 0.20392157, 0.2509804, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.6392157, 0.54509807, 0.34509805, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2w45r"]
+bg_color = Color(0.4, 0.3529412, 0.22352941, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.89411765, 0.654902, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pdtog"]
+bg_color = Color(0.20392157, 0.3137255, 0.3529412, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.9372549, 0.81960785, 0.54901963, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d0osj"]
+bg_color = Color(0.1254902, 0.16470589, 0.15686275, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.42745098, 0.44313726, 0.34509805, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[node name="Journal" type="Panel" unique_id=685366994]
+visible = false
+layout_mode = 0
+offset_left = 150.0
+offset_top = 105.0
+offset_right = 1002.0
+offset_bottom = 605.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_dnuht")
+
+[node name="@Label@104" type="Label" parent="." unique_id=240642876]
+layout_mode = 0
+offset_left = 28.0
+offset_top = 20.0
+offset_right = 28.0
+offset_bottom = 20.0
+theme_override_colors/font_color = Color(0.654902, 0.7254902, 0.7411765, 1)
+theme_override_colors/font_outline_color = Color(0.09411765, 0.12941177, 0.11372549, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 11
+text = "CRÔNICA / MISSÕES E DESCOBERTAS"
+
+[node name="@Label@105" type="Label" parent="." unique_id=619301443]
+layout_mode = 0
+offset_left = 28.0
+offset_top = 41.0
+offset_right = 28.0
+offset_bottom = 41.0
+theme_override_colors/font_color = Color(0.9529412, 0.8745098, 0.6784314, 1)
+theme_override_colors/font_outline_color = Color(0.09411765, 0.12941177, 0.11372549, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 26
+text = "A Última Aurora"
+
+[node name="@Label@106" type="Label" parent="." unique_id=1730600214]
+layout_mode = 0
+offset_left = 28.0
+offset_top = 80.0
+offset_right = 28.0
+offset_bottom = 80.0
+theme_override_colors/font_color = Color(0.72156864, 0.79607844, 0.8156863, 1)
+theme_override_colors/font_outline_color = Color(0.09411765, 0.12941177, 0.11372549, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 13
+text = "Investigue o vale, encontre as memórias e restaure os caminhos entre os povos."
+
+[node name="Close" type="Button" parent="." unique_id=1095898961]
+layout_mode = 0
+offset_left = 800.0
+offset_top = 18.0
+offset_right = 832.0
+offset_bottom = 50.0
+focus_mode = 0
+theme_override_colors/font_color = Color(1, 0.9019608, 0.6745098, 1)
+theme_override_colors/font_disabled_color = Color(0.57254905, 0.5803922, 0.49803922, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_spukx")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_3buue")
+theme_override_styles/hover = SubResource("StyleBoxFlat_34og3")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_dy7xq")
+text = "×"
+
+[node name="QuestScroll" type="ScrollContainer" parent="." unique_id=1408015365]
+layout_mode = 0
+offset_left = 26.0
+offset_top = 114.0
+offset_right = 826.0
+offset_bottom = 424.0
+horizontal_scroll_mode = 0
+
+[node name="QuestList" type="VBoxContainer" parent="QuestScroll" unique_id=87702831]
+custom_minimum_size = Vector2(775, 0)
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Quest0" type="Panel" parent="QuestScroll/QuestList" unique_id=67602625]
+custom_minimum_size = Vector2(775, 104)
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_53rip")
+
+[node name="Content" type="Label" parent="QuestScroll/QuestList/Quest0" unique_id=1420818641]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 12.0
+offset_right = 756.0
+offset_bottom = 100.0
+theme_override_colors/font_color = Color(0.8666667, 0.8980392, 0.8627451, 1)
+theme_override_colors/font_outline_color = Color(0.09411765, 0.12941177, 0.11372549, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 14
+text = "Primeiros passos  ·  0/3
+Derrote 3 limos verdes.
+Recompensa: 70 XP + 30 ouro"
+autowrap_mode = 3
+
+[node name="Quest1" type="Panel" parent="QuestScroll/QuestList" unique_id=1301399260]
+custom_minimum_size = Vector2(775, 104)
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_jmaqy")
+
+[node name="Content" type="Label" parent="QuestScroll/QuestList/Quest1" unique_id=937315028]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 12.0
+offset_right = 756.0
+offset_bottom = 100.0
+theme_override_colors/font_color = Color(0.8666667, 0.8980392, 0.8627451, 1)
+theme_override_colors/font_outline_color = Color(0.09411765, 0.12941177, 0.11372549, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 14
+text = "Uivos no vale  ·  0/2
+Derrote 2 lobos cinzentos.
+Recompensa: 100 XP + 50 ouro"
+autowrap_mode = 3
+
+[node name="Quest2" type="Panel" parent="QuestScroll/QuestList" unique_id=357115189]
+custom_minimum_size = Vector2(775, 104)
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_fyg67")
+
+[node name="Content" type="Label" parent="QuestScroll/QuestList/Quest2" unique_id=1713861991]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 12.0
+offset_right = 756.0
+offset_bottom = 100.0
+theme_override_colors/font_color = Color(0.8666667, 0.8980392, 0.8627451, 1)
+theme_override_colors/font_outline_color = Color(0.09411765, 0.12941177, 0.11372549, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 14
+text = "Pedra desperta  ·  0/1
+Derrote uma sentinela de pedra.
+Recompensa: 150 XP + 75 ouro"
+autowrap_mode = 3
+
+[node name="Quest3" type="Panel" parent="QuestScroll/QuestList" unique_id=1509773288]
+custom_minimum_size = Vector2(775, 104)
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_3qww1")
+
+[node name="Content" type="Label" parent="QuestScroll/QuestList/Quest3" unique_id=1373006873]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 12.0
+offset_right = 756.0
+offset_bottom = 100.0
+theme_override_colors/font_color = Color(0.8666667, 0.8980392, 0.8627451, 1)
+theme_override_colors/font_outline_color = Color(0.09411765, 0.12941177, 0.11372549, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 14
+text = "Ervas do curandeiro  ·  0/3
+Colete as 3 ervas luminosas usando F.
+Recompensa: 75 XP + 40 ouro"
+autowrap_mode = 3
+
+[node name="Quest4" type="Panel" parent="QuestScroll/QuestList" unique_id=1654859517]
+custom_minimum_size = Vector2(775, 104)
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_uwwh2")
+
+[node name="Content" type="Label" parent="QuestScroll/QuestList/Quest4" unique_id=256491461]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 12.0
+offset_right = 756.0
+offset_bottom = 100.0
+theme_override_colors/font_color = Color(0.8666667, 0.8980392, 0.8627451, 1)
+theme_override_colors/font_outline_color = Color(0.09411765, 0.12941177, 0.11372549, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 14
+text = "Explorador do vale  ·  0/1
+Visite o marco azul a sudeste.
+Recompensa: 50 XP + 25 ouro"
+autowrap_mode = 3
+
+[node name="Quest5" type="Panel" parent="QuestScroll/QuestList" unique_id=1475662907]
+custom_minimum_size = Vector2(775, 104)
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_mc6dr")
+
+[node name="Content" type="Label" parent="QuestScroll/QuestList/Quest5" unique_id=1249698433]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 12.0
+offset_right = 756.0
+offset_bottom = 100.0
+theme_override_colors/font_color = Color(0.8666667, 0.8980392, 0.8627451, 1)
+theme_override_colors/font_outline_color = Color(0.09411765, 0.12941177, 0.11372549, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 14
+text = "A memória das raízes  ·  CAPÍTULO BLOQUEADO
+Toque o santuário no Bosque dos Ecos. Descubra o que feriu a Matriarca.
+Recompensa: 100 XP + 50 ouro  ·  Requer: Explorador do vale"
+autowrap_mode = 3
+
+[node name="Quest6" type="Panel" parent="QuestScroll/QuestList" unique_id=1219914233]
+custom_minimum_size = Vector2(775, 104)
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_3vc0l")
+
+[node name="Content" type="Label" parent="QuestScroll/QuestList/Quest6" unique_id=609480460]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 12.0
+offset_right = 756.0
+offset_bottom = 100.0
+theme_override_colors/font_color = Color(0.8666667, 0.8980392, 0.8627451, 1)
+theme_override_colors/font_outline_color = Color(0.09411765, 0.12941177, 0.11372549, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 14
+text = "Um coração sob os espinhos  ·  CAPÍTULO BLOQUEADO
+Liberte a Matriarca na clareira. Evite espinhos e esporos.
+Recompensa: 200 XP + 100 ouro  ·  Requer: A memória das raízes"
+autowrap_mode = 3
+
+[node name="Quest7" type="Panel" parent="QuestScroll/QuestList" unique_id=1855829645]
+custom_minimum_size = Vector2(775, 104)
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_pyeyo")
+
+[node name="Content" type="Label" parent="QuestScroll/QuestList/Quest7" unique_id=1201967848]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 12.0
+offset_right = 756.0
+offset_bottom = 100.0
+theme_override_colors/font_color = Color(0.8666667, 0.8980392, 0.8627451, 1)
+theme_override_colors/font_outline_color = Color(0.09411765, 0.12941177, 0.11372549, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 14
+text = "O primeiro juramento  ·  CAPÍTULO BLOQUEADO
+Ouça a memória de Íria na Cidadela do Ocaso.
+Recompensa: 140 XP + 70 ouro  ·  Requer: Um coração sob os espinhos"
+autowrap_mode = 3
+
+[node name="Quest8" type="Panel" parent="QuestScroll/QuestList" unique_id=2041705458]
+custom_minimum_size = Vector2(775, 104)
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_uryfu")
+
+[node name="Content" type="Label" parent="QuestScroll/QuestList/Quest8" unique_id=1365960543]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 12.0
+offset_right = 756.0
+offset_bottom = 100.0
+theme_override_colors/font_color = Color(0.8666667, 0.8980392, 0.8627451, 1)
+theme_override_colors/font_outline_color = Color(0.09411765, 0.12941177, 0.11372549, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 14
+text = "A luz aprisionada  ·  CAPÍTULO BLOQUEADO
+Vença o Arconte. Quebre os pilares para remover seu escudo.
+Recompensa: 300 XP + 160 ouro  ·  Requer: O primeiro juramento"
+autowrap_mode = 3
+
+[node name="Quest9" type="Panel" parent="QuestScroll/QuestList" unique_id=1480589456]
+custom_minimum_size = Vector2(775, 104)
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_11bgf")
+
+[node name="Content" type="Label" parent="QuestScroll/QuestList/Quest9" unique_id=1835848469]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 12.0
+offset_right = 756.0
+offset_bottom = 100.0
+theme_override_colors/font_color = Color(0.8666667, 0.8980392, 0.8627451, 1)
+theme_override_colors/font_outline_color = Color(0.09411765, 0.12941177, 0.11372549, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 14
+text = "A próxima manhã  ·  CAPÍTULO BLOQUEADO
+Volte à fonte e reúna as duas ressonâncias com F. Entregue a missão a Lia.
+Recompensa: 300 XP + 200 ouro  ·  Requer: A luz aprisionada"
+autowrap_mode = 3
+
+[node name="Deliver" type="Button" parent="." unique_id=1659831523]
+layout_mode = 0
+offset_left = 26.0
+offset_top = 444.0
+offset_right = 296.0
+offset_bottom = 482.0
+focus_mode = 0
+theme_override_colors/font_color = Color(1, 0.9019608, 0.6745098, 1)
+theme_override_colors/font_disabled_color = Color(0.57254905, 0.5803922, 0.49803922, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_nt8g7")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_0or6e")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ym44x")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_ukkwv")
+text = "CONVERSAR / ENTREGAR [F]"
+
+[node name="Story" type="Button" parent="." unique_id=427905530]
+layout_mode = 0
+offset_left = 310.0
+offset_top = 444.0
+offset_right = 505.0
+offset_bottom = 482.0
+focus_mode = 0
+theme_override_colors/font_color = Color(1, 0.9019608, 0.6745098, 1)
+theme_override_colors/font_disabled_color = Color(0.57254905, 0.5803922, 0.49803922, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_pcjg0")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_2w45r")
+theme_override_styles/hover = SubResource("StyleBoxFlat_pdtog")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_d0osj")
+text = "LER A CRÔNICA"
+
+[node name="@Label@134" type="Label" parent="." unique_id=917946210]
+layout_mode = 0
+offset_left = 530.0
+offset_top = 455.0
+offset_right = 530.0
+offset_bottom = 455.0
+theme_override_colors/font_color = Color(0.6509804, 0.74509805, 0.7372549, 1)
+theme_override_colors/font_outline_color = Color(0.09411765, 0.12941177, 0.11372549, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 12
+text = "Recompensas no NPC da região."

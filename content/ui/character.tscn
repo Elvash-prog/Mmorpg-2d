@@ -1,0 +1,563 @@
+[gd_scene format=3]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hhb5s"]
+bg_color = Color(0.055, 0.09, 0.13, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.6392157, 0.54509807, 0.34509805, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dsjgc"]
+bg_color = Color(0.13725491, 0.20392157, 0.2509804, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.6392157, 0.54509807, 0.34509805, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pi67a"]
+bg_color = Color(0.4, 0.3529412, 0.22352941, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.89411765, 0.654902, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_c2ccs"]
+bg_color = Color(0.20392157, 0.3137255, 0.3529412, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.9372549, 0.81960785, 0.54901963, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mepa6"]
+bg_color = Color(0.1254902, 0.16470589, 0.15686275, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.42745098, 0.44313726, 0.34509805, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2jakh"]
+bg_color = Color(0.13725491, 0.20392157, 0.2509804, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.6392157, 0.54509807, 0.34509805, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rlt5y"]
+bg_color = Color(0.4, 0.3529412, 0.22352941, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.89411765, 0.654902, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hc7no"]
+bg_color = Color(0.20392157, 0.3137255, 0.3529412, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.9372549, 0.81960785, 0.54901963, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8gge1"]
+bg_color = Color(0.1254902, 0.16470589, 0.15686275, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.42745098, 0.44313726, 0.34509805, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pdava"]
+bg_color = Color(0.13725491, 0.20392157, 0.2509804, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.6392157, 0.54509807, 0.34509805, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_u1y1f"]
+bg_color = Color(0.4, 0.3529412, 0.22352941, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.89411765, 0.654902, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_02x8q"]
+bg_color = Color(0.20392157, 0.3137255, 0.3529412, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.9372549, 0.81960785, 0.54901963, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1m0vg"]
+bg_color = Color(0.1254902, 0.16470589, 0.15686275, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.42745098, 0.44313726, 0.34509805, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hox6i"]
+bg_color = Color(0.13725491, 0.20392157, 0.2509804, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.6392157, 0.54509807, 0.34509805, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vvhod"]
+bg_color = Color(0.4, 0.3529412, 0.22352941, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.89411765, 0.654902, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gjpop"]
+bg_color = Color(0.20392157, 0.3137255, 0.3529412, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.9372549, 0.81960785, 0.54901963, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_744l6"]
+bg_color = Color(0.1254902, 0.16470589, 0.15686275, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.42745098, 0.44313726, 0.34509805, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8avpa"]
+bg_color = Color(0.13725491, 0.20392157, 0.2509804, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.6392157, 0.54509807, 0.34509805, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_k4qks"]
+bg_color = Color(0.4, 0.3529412, 0.22352941, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.89411765, 0.654902, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_l6t75"]
+bg_color = Color(0.20392157, 0.3137255, 0.3529412, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.9372549, 0.81960785, 0.54901963, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5vnwu"]
+bg_color = Color(0.1254902, 0.16470589, 0.15686275, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.42745098, 0.44313726, 0.34509805, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_r43dr"]
+bg_color = Color(0.13725491, 0.20392157, 0.2509804, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.6392157, 0.54509807, 0.34509805, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_143op"]
+bg_color = Color(0.4, 0.3529412, 0.22352941, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.89411765, 0.654902, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_v5kwv"]
+bg_color = Color(0.20392157, 0.3137255, 0.3529412, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.9372549, 0.81960785, 0.54901963, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5o7sj"]
+bg_color = Color(0.1254902, 0.16470589, 0.15686275, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.42745098, 0.44313726, 0.34509805, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 10
+
+[node name="Character" type="Panel" unique_id=712075988]
+visible = false
+layout_mode = 0
+offset_left = 140.0
+offset_top = 100.0
+offset_right = 1012.0
+offset_bottom = 615.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_hhb5s")
+
+[node name="@Label@148" type="Label" parent="." unique_id=357204554]
+layout_mode = 0
+offset_left = 28.0
+offset_top = 20.0
+offset_right = 28.0
+offset_bottom = 20.0
+theme_override_colors/font_color = Color(0.654902, 0.7254902, 0.7411765, 1)
+theme_override_colors/font_outline_color = Color(0.09411765, 0.12941177, 0.11372549, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 11
+text = "PERSONAGEM / EQUIPAMENTO E ATRIBUTOS"
+
+[node name="@Label@149" type="Label" parent="." unique_id=1351100414]
+layout_mode = 0
+offset_left = 28.0
+offset_top = 41.0
+offset_right = 28.0
+offset_bottom = 41.0
+theme_override_colors/font_color = Color(0.9529412, 0.8745098, 0.6784314, 1)
+theme_override_colors/font_outline_color = Color(0.09411765, 0.12941177, 0.11372549, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 26
+text = "Prepare-se para o que vem adiante"
+
+[node name="@Label@150" type="Label" parent="." unique_id=855541360]
+layout_mode = 0
+offset_left = 28.0
+offset_top = 80.0
+offset_right = 28.0
+offset_bottom = 80.0
+theme_override_colors/font_color = Color(0.72156864, 0.79607844, 0.8156863, 1)
+theme_override_colors/font_outline_color = Color(0.09411765, 0.12941177, 0.11372549, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 13
+text = "Os bônus dos itens alteram o combate. Equipe e remova itens fora de combate."
+
+[node name="Close" type="Button" parent="." unique_id=701084330]
+layout_mode = 0
+offset_left = 820.0
+offset_top = 18.0
+offset_right = 852.0
+offset_bottom = 50.0
+focus_mode = 0
+theme_override_colors/font_color = Color(1, 0.9019608, 0.6745098, 1)
+theme_override_colors/font_disabled_color = Color(0.57254905, 0.5803922, 0.49803922, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_dsjgc")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_pi67a")
+theme_override_styles/hover = SubResource("StyleBoxFlat_c2ccs")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_mepa6")
+text = "×"
+
+[node name="Stats" type="RichTextLabel" parent="." unique_id=1834889030]
+layout_mode = 0
+offset_left = 28.0
+offset_top = 114.0
+offset_right = 342.0
+offset_bottom = 252.0
+mouse_filter = 1
+theme_override_colors/default_color = Color(0.8392157, 0.8784314, 0.8627451, 1)
+theme_override_font_sizes/normal_font_size = 14
+bbcode_enabled = true
+text = "[color=#f1d99e]Guerreiro[/color]
+Vida 140/140  ·  Energia 80/80
+
+Poder adicional [color=#a9d7c2]+0[/color]  ·  Defesa 0
+Crítico 0%  ·  Velocidade 165
+XP 0  ·  Ouro 0"
+
+[node name="Weapon" type="Button" parent="." unique_id=1190833019]
+layout_mode = 0
+offset_left = 28.0
+offset_top = 265.0
+offset_right = 342.0
+offset_bottom = 302.0
+tooltip_text = "Clique para remover este equipamento."
+focus_mode = 0
+theme_override_colors/font_color = Color(1, 0.9019608, 0.6745098, 1)
+theme_override_colors/font_disabled_color = Color(0.57254905, 0.5803922, 0.49803922, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_2jakh")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_rlt5y")
+theme_override_styles/hover = SubResource("StyleBoxFlat_hc7no")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_8gge1")
+text = "Arma · Espada de aprendiz"
+
+[node name="Armor" type="Button" parent="." unique_id=580355212]
+layout_mode = 0
+offset_left = 28.0
+offset_top = 308.0
+offset_right = 342.0
+offset_bottom = 345.0
+tooltip_text = "Clique para remover este equipamento."
+focus_mode = 0
+theme_override_colors/font_color = Color(1, 0.9019608, 0.6745098, 1)
+theme_override_colors/font_disabled_color = Color(0.57254905, 0.5803922, 0.49803922, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_pdava")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_u1y1f")
+theme_override_styles/hover = SubResource("StyleBoxFlat_02x8q")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_1m0vg")
+text = "Armadura · Vazio"
+
+[node name="Boots" type="Button" parent="." unique_id=1928359705]
+layout_mode = 0
+offset_left = 28.0
+offset_top = 351.0
+offset_right = 342.0
+offset_bottom = 388.0
+tooltip_text = "Clique para remover este equipamento."
+focus_mode = 0
+theme_override_colors/font_color = Color(1, 0.9019608, 0.6745098, 1)
+theme_override_colors/font_disabled_color = Color(0.57254905, 0.5803922, 0.49803922, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_hox6i")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_vvhod")
+theme_override_styles/hover = SubResource("StyleBoxFlat_gjpop")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_744l6")
+text = "Botas · Vazio"
+
+[node name="Amulet" type="Button" parent="." unique_id=1765563331]
+layout_mode = 0
+offset_left = 28.0
+offset_top = 394.0
+offset_right = 342.0
+offset_bottom = 431.0
+tooltip_text = "Clique para remover este equipamento."
+focus_mode = 0
+theme_override_colors/font_color = Color(1, 0.9019608, 0.6745098, 1)
+theme_override_colors/font_disabled_color = Color(0.57254905, 0.5803922, 0.49803922, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_8avpa")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_k4qks")
+theme_override_styles/hover = SubResource("StyleBoxFlat_l6t75")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_5vnwu")
+text = "Amuleto · Vazio"
+
+[node name="@Label@159" type="Label" parent="." unique_id=2030976198]
+layout_mode = 0
+offset_left = 365.0
+offset_top = 116.0
+offset_right = 365.0
+offset_bottom = 116.0
+theme_override_colors/font_color = Color(0.8509804, 0.7882353, 0.62352943, 1)
+theme_override_colors/font_outline_color = Color(0.09411765, 0.12941177, 0.11372549, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 13
+text = "INVENTÁRIO · selecione um item"
+
+[node name="InventoryScroll" type="ScrollContainer" parent="." unique_id=184594907]
+layout_mode = 0
+offset_left = 365.0
+offset_top = 144.0
+offset_right = 843.0
+offset_bottom = 306.0
+horizontal_scroll_mode = 0
+
+[node name="Inventory" type="VBoxContainer" parent="InventoryScroll" unique_id=1171959473]
+custom_minimum_size = Vector2(450, 0)
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="ItemDetails" type="RichTextLabel" parent="." unique_id=1628117174]
+layout_mode = 0
+offset_left = 365.0
+offset_top = 317.0
+offset_right = 843.0
+offset_bottom = 430.0
+mouse_filter = 1
+theme_override_colors/default_color = Color(0.8392157, 0.8784314, 0.8627451, 1)
+theme_override_font_sizes/normal_font_size = 13
+bbcode_enabled = true
+text = "[color=#ccd5cf]Espada de aprendiz · Comum · Guerreiro[/color]
+
+[i]Toda jornada começa com uma lâmina simples.[/i]"
+
+[node name="Equip" type="Button" parent="." unique_id=887871414]
+layout_mode = 0
+offset_left = 365.0
+offset_top = 440.0
+offset_right = 843.0
+offset_bottom = 475.0
+focus_mode = 0
+theme_override_colors/font_color = Color(1, 0.9019608, 0.6745098, 1)
+theme_override_colors/font_disabled_color = Color(0.57254905, 0.5803922, 0.49803922, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_r43dr")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_143op")
+theme_override_styles/hover = SubResource("StyleBoxFlat_v5kwv")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_5o7sj")
+text = "EQUIPAR ITEM SELECIONADO"
+
+[node name="Feedback" type="Label" parent="." unique_id=1687738379]
+layout_mode = 0
+offset_left = 28.0
+offset_top = 490.0
+offset_right = 28.0
+offset_bottom = 490.0
+theme_override_colors/font_color = Color(0.8392157, 0.7764706, 0.63529414, 1)
+theme_override_colors/font_outline_color = Color(0.09411765, 0.12941177, 0.11372549, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 11
+text = "A fonte está enfraquecendo. Fale com Lia [F] e prepare-se para partir."

@@ -1,0 +1,254 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/maps/map_region.gd" id="1_47wb4"]
+[ext_resource type="Texture2D" path="res://assets/village.png" id="2_n85w8"]
+[ext_resource type="Script" path="res://scripts/maps/map_object.gd" id="3_yyjmo"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_6fxcp"]
+texture = ExtResource("2_n85w8")
+texture_region_size = Vector2i(32, 32)
+27:17/0 = 0
+13:18/0 = 0
+2:5/0 = 0
+2:5/0/custom_data_0 = true
+
+[sub_resource type="TileSet" id="TileSet_ve1nn"]
+tile_size = Vector2i(32, 32)
+custom_data_layer_0/name = "blocked"
+custom_data_layer_0/type = 1
+sources/0 = SubResource("TileSetAtlasSource_6fxcp")
+
+[node name="Vale" type="Node2D" unique_id=1196707614]
+script = ExtResource("1_47wb4")
+region_id = &"area.vale"
+display_name = "Vale da Aurora"
+subtitle = "Um último abrigo sob a luz da fonte"
+theme_color = Color(0.9098039, 0.8117647, 0.5803922, 1)
+
+[node name="Background" type="Sprite2D" parent="." unique_id=162469252]
+scale = Vector2(0.68899524, 0.67587674)
+texture = ExtResource("2_n85w8")
+centered = false
+
+[node name="Terrain" type="TileMapLayer" parent="." unique_id=2036623067]
+tile_set = SubResource("TileSet_ve1nn")
+
+[node name="Decoration" type="TileMapLayer" parent="." unique_id=1090045919]
+tile_set = SubResource("TileSet_ve1nn")
+
+[node name="CollisionTiles" type="TileMapLayer" parent="." unique_id=465408953]
+modulate = Color(1, 1, 1, 0)
+tile_set = SubResource("TileSet_ve1nn")
+
+[node name="Foreground" type="TileMapLayer" parent="." unique_id=1229439614]
+z_index = 5
+tile_set = SubResource("TileSet_ve1nn")
+
+[node name="Collision" type="Node2D" parent="." unique_id=517855417]
+
+[node name="Obstacle00" type="StaticBody2D" parent="Collision" unique_id=1822153671]
+
+[node name="Shape" type="CollisionPolygon2D" parent="Collision/Obstacle00" unique_id=407290089]
+polygon = PackedVector2Array(32, 112, 115, 112, 115, 293, 32, 293)
+
+[node name="Obstacle01" type="StaticBody2D" parent="Collision" unique_id=1184694343]
+
+[node name="Shape" type="CollisionPolygon2D" parent="Collision/Obstacle01" unique_id=775951229]
+polygon = PackedVector2Array(33, 350, 119, 350, 119, 602, 33, 602)
+
+[node name="Obstacle02" type="StaticBody2D" parent="Collision" unique_id=1950659709]
+
+[node name="Shape" type="CollisionPolygon2D" parent="Collision/Obstacle02" unique_id=227151795]
+polygon = PackedVector2Array(395, 155, 571, 155, 571, 246, 395, 246)
+
+[node name="Obstacle03" type="StaticBody2D" parent="Collision" unique_id=471497487]
+
+[node name="Shape" type="CollisionPolygon2D" parent="Collision/Obstacle03" unique_id=379893227]
+polygon = PackedVector2Array(360, 118, 395, 118, 395, 167, 360, 167)
+
+[node name="Obstacle04" type="StaticBody2D" parent="Collision" unique_id=474152250]
+
+[node name="Shape" type="CollisionPolygon2D" parent="Collision/Obstacle04" unique_id=1234766080]
+polygon = PackedVector2Array(142, 219, 171, 219, 171, 247, 142, 247)
+
+[node name="Obstacle05" type="StaticBody2D" parent="Collision" unique_id=1543097613]
+
+[node name="Shape" type="CollisionPolygon2D" parent="Collision/Obstacle05" unique_id=762706212]
+polygon = PackedVector2Array(201, 128, 232, 128, 232, 148, 201, 148)
+
+[node name="Obstacle06" type="StaticBody2D" parent="Collision" unique_id=234081165]
+
+[node name="Shape" type="CollisionPolygon2D" parent="Collision/Obstacle06" unique_id=1820253488]
+polygon = PackedVector2Array(1040, 112, 1136, 112, 1136, 202, 1040, 202)
+
+[node name="Obstacle07" type="StaticBody2D" parent="Collision" unique_id=2065161877]
+
+[node name="Shape" type="CollisionPolygon2D" parent="Collision/Obstacle07" unique_id=815933975]
+polygon = PackedVector2Array(1070, 208, 1136, 208, 1136, 332, 1070, 332)
+
+[node name="Obstacle08" type="StaticBody2D" parent="Collision" unique_id=1178739887]
+
+[node name="Shape" type="CollisionPolygon2D" parent="Collision/Obstacle08" unique_id=1310910034]
+polygon = PackedVector2Array(1060, 351, 1136, 351, 1136, 464, 1060, 464)
+
+[node name="Obstacle09" type="StaticBody2D" parent="Collision" unique_id=523390101]
+
+[node name="Shape" type="CollisionPolygon2D" parent="Collision/Obstacle09" unique_id=1964462354]
+polygon = PackedVector2Array(1050, 485, 1136, 485, 1136, 602, 1050, 602)
+
+[node name="Obstacle10" type="StaticBody2D" parent="Collision" unique_id=1396119691]
+
+[node name="Shape" type="CollisionPolygon2D" parent="Collision/Obstacle10" unique_id=1263365010]
+polygon = PackedVector2Array(385, 574, 480, 574, 480, 602, 385, 602)
+
+[node name="Obstacle11" type="StaticBody2D" parent="Collision" unique_id=136682011]
+
+[node name="Shape" type="CollisionPolygon2D" parent="Collision/Obstacle11" unique_id=1247210560]
+polygon = PackedVector2Array(493, 580, 553, 580, 553, 602, 493, 602)
+
+[node name="Obstacle12" type="StaticBody2D" parent="Collision" unique_id=1343781284]
+
+[node name="Shape" type="CollisionPolygon2D" parent="Collision/Obstacle12" unique_id=1224382340]
+polygon = PackedVector2Array(712, 574, 754, 574, 754, 602, 712, 602)
+
+[node name="Objects" type="Node2D" parent="." unique_id=2072932830]
+
+[node name="Portal0" type="Marker2D" parent="Objects" unique_id=1307202759]
+position = Vector2(1000, 315)
+script = ExtResource("3_yyjmo")
+object_id = &"portal.0"
+kind = "portal"
+properties = {
+"area": 0,
+&"arrival_offset": Vector2(50, 40),
+&"index": 0,
+"name": "Bosque dos Ecos",
+&"target_id": &"portal.1"
+}
+
+[node name="Npc0" type="Marker2D" parent="Objects" unique_id=1521060826]
+position = Vector2(365, 385)
+script = ExtResource("3_yyjmo")
+object_id = &"npc.0"
+kind = "npc"
+properties = {
+"area": 0,
+&"index": 0,
+"name": "Lia",
+"role": "Guardadora da fonte"
+}
+
+[node name="Chest0" type="Marker2D" parent="Objects" unique_id=1613252901]
+position = Vector2(590, 325)
+script = ExtResource("3_yyjmo")
+object_id = &"chest.0"
+definition_id = &"item.travel_coat"
+properties = {
+"area": 0,
+&"index": 0
+}
+
+[node name="Herb0" type="Marker2D" parent="Objects" unique_id=1486712760]
+position = Vector2(600, 510)
+script = ExtResource("3_yyjmo")
+object_id = &"herb.0"
+kind = "herb"
+properties = {
+&"index": 0
+}
+
+[node name="Herb1" type="Marker2D" parent="Objects" unique_id=734092741]
+position = Vector2(740, 155)
+script = ExtResource("3_yyjmo")
+object_id = &"herb.1"
+kind = "herb"
+properties = {
+&"index": 1
+}
+
+[node name="Herb2" type="Marker2D" parent="Objects" unique_id=1354117314]
+position = Vector2(940, 360)
+script = ExtResource("3_yyjmo")
+object_id = &"herb.2"
+kind = "herb"
+properties = {
+&"index": 2
+}
+
+[node name="Landmark0" type="Marker2D" parent="Objects" unique_id=581147859]
+position = Vector2(880, 490)
+script = ExtResource("3_yyjmo")
+object_id = &"landmark.0"
+kind = "landmark"
+properties = {
+&"index": 0
+}
+
+[node name="Spawn0" type="Marker2D" parent="Objects" unique_id=194582330]
+position = Vector2(300, 318)
+script = ExtResource("3_yyjmo")
+object_id = &"spawn.0"
+kind = "spawn"
+properties = {
+&"index": 0
+}
+
+[node name="Enemy0" type="Marker2D" parent="Objects" unique_id=1830833599]
+position = Vector2(620, 235)
+script = ExtResource("3_yyjmo")
+object_id = &"enemy.0"
+kind = "enemy"
+definition_id = &"enemy.slime"
+properties = {
+&"index": 0
+}
+
+[node name="Enemy1" type="Marker2D" parent="Objects" unique_id=2028513525]
+position = Vector2(760, 245)
+script = ExtResource("3_yyjmo")
+object_id = &"enemy.1"
+kind = "enemy"
+definition_id = &"enemy.slime"
+properties = {
+&"index": 1
+}
+
+[node name="Enemy2" type="Marker2D" parent="Objects" unique_id=90039487]
+position = Vector2(640, 415)
+script = ExtResource("3_yyjmo")
+object_id = &"enemy.2"
+kind = "enemy"
+definition_id = &"enemy.slime"
+properties = {
+&"index": 2
+}
+
+[node name="Enemy3" type="Marker2D" parent="Objects" unique_id=654874963]
+position = Vector2(820, 365)
+script = ExtResource("3_yyjmo")
+object_id = &"enemy.3"
+kind = "enemy"
+definition_id = &"enemy.wolf"
+properties = {
+&"index": 3
+}
+
+[node name="Enemy4" type="Marker2D" parent="Objects" unique_id=1742687351]
+position = Vector2(925, 435)
+script = ExtResource("3_yyjmo")
+object_id = &"enemy.4"
+kind = "enemy"
+definition_id = &"enemy.wolf"
+properties = {
+&"index": 4
+}
+
+[node name="Enemy5" type="Marker2D" parent="Objects" unique_id=802124748]
+position = Vector2(850, 535)
+script = ExtResource("3_yyjmo")
+object_id = &"enemy.5"
+kind = "enemy"
+definition_id = &"enemy.golem"
+properties = {
+&"index": 5
+}

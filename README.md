@@ -4,6 +4,15 @@ Protótipo de RPG 2D cooperativo para PC e Android no Godot 4.6.3 padrão, agora
 
 ![Interface do jogo](docs/interface-pc.png)
 
+## Estrutura baseada nos padrões dos documentos
+
+O jogo agora usa recursos de conteúdo com IDs estáveis, módulos separados para combate/atores/projéteis/missões/inventário/chefes, animação por estados, mapas em cenas com camadas e seis janelas declarativas. A rede possui um envelope próprio versionado e validado. O conteúdo e o gameplay existentes foram preservados durante a migração.
+
+- [Arquitetura implementada e seus limites](docs/ARCHITECTURE.md)
+- [Guia para editar mapas, conteúdo, animações e janelas](docs/EDITING_GUIDE.md)
+
+Os três mapas podem ser abertos no editor em `content/maps/`. A imagem de fundo foi preservada; as novas camadas permitem pintar terreno e decoração, editar colisões e mover objetos. A conversão da arte inteira para tiles e o streaming de regiões ainda não foram feitos.
+
 ## Abrir e jogar
 
 1. Instale o **Godot 4.6.3 padrão** (sem .NET).
@@ -130,13 +139,13 @@ Além disso, inimigos dão XP e dois de ouro por abate. Jogadores vivos que cont
 
 Abra **REDE → Hospedar** em uma instância. Na outra, abra **REDE**, informe o IP do anfitrião e clique em **Conectar**. Duas janelas no mesmo computador usam `127.0.0.1`; em Wi-Fi, use o IP local do anfitrião. Libere **UDP 24567** no firewall do anfitrião. O host pode receber até oito convidados; o teste automatizado usa um host e um cliente.
 
-O servidor calcula colisões, projéteis, recursos, habilidades, dano e recompensas. Estado comprimido é enviado em um canal confiável separado; comandos de movimento usam mensagens não confiáveis com expiração. Esta é uma base de cooperação local, sem previsão de movimento, compensação de latência ou testes de carga. Não há servidor público, contas, persistência ou criptografia. Conexão pela internet depende de um host acessível e configuração de rede.
+O servidor calcula colisões, projéteis, recursos, habilidades, dano e recompensas. Estado comprimido com cabeçalho próprio `AURA` v1 é enviado em um canal confiável separado; comandos de movimento usam mensagens não confiáveis com expiração. Esta é uma base de cooperação local, sem previsão de movimento, compensação de latência ou testes de carga. Cliente e servidor devem usar esta mesma versão, que substitui o snapshot sem cabeçalho das versões anteriores. Não há servidor público, contas, persistência ou criptografia. Conexão pela internet depende de um host acessível e configuração de rede.
 
 ## Arte e animações
 
 As folhas `assets/class_actions.png` e `assets/enemies.png` contêm poses de preparação, ataque e recuperação. Ataques têm efeitos de corte, gelo, fogo, raio, flechas, escudo, cura e números de dano. As três classes usam folhas de caminhada em quatro direções. O atlas `assets/skill_atlas.png` fornece quinze ícones de habilidade e cinco sprites de efeitos, também usados em projéteis e impactos. Efeitos são desenhados pelo Godot e replicados pelo servidor.
 
-Os três mapas são fundos ilustrados com colisões lógicas e objetos interativos sobrepostos. Não há TileSet editável, interiores ou oclusão por camadas. As máscaras são aproximações de áreas sólidas, não recortes de cada pixel das árvores. Consulte [as notas da arte](assets/ART.md).
+Os três mapas preservam fundos ilustrados e agora têm camadas nativas de terreno, decoração, colisão, objetos e primeiro plano. Há uma paleta inicial editável de três tiles; interiores e um TileSet completo de arte ainda não existem. As máscaras são aproximações de áreas sólidas, não recortes de cada pixel das árvores. Consulte [as notas da arte](assets/ART.md).
 
 [Prévia do guerreiro](docs/class-warrior.png) · [Maga](docs/class-mage.png) · [Patrulheira](docs/class-ranger.png) · [Diário](docs/journal.png) · [Classes](docs/classes.png) · [História](docs/story.png) · [Cidadela](docs/ruins.png) · [Modo toque](docs/interface-touch.png)
 
@@ -152,15 +161,19 @@ Para exportar APK, instale os templates correspondentes ao Godot 4.6.3 e configu
 # Importe as texturas na primeira execução após clonar:
 godot --headless --editor --import --path . --quit
 godot --path .
+godot --headless --path . --script tools/validate_content.gd
 godot --headless --path . --script tests/combat_test.gd
 godot --headless --path . --script tests/ui_test.gd
 godot --headless --path . --script tests/realms_test.gd
+godot --headless --path . --script tests/architecture_test.gd
 python3 tests/network_smoke.py
 # Servidor local, quando necessário:
 godot --headless --path . -- --server
 # Visualizar as máscaras de colisão:
 godot --path . -- --debug-collisions
 ```
+
+`CONTENT_PASS` valida os 47 registros, os oito perfis e os mapas. `ARCHITECTURE_PASS` verifica estados e tempo de animação, pintura de camadas, navegação por chunks, referências de objetos, cenas de UI e rejeição de pacotes inválidos. Para executar tudo: `python3 tests/run_checks.py --network`.
 
 `COMBAT_PASS` valida as quinze habilidades, custo/recarga, colisões, ponte, projéteis, linha de visão, desvios de ataques, caminhos, missões, recompensas únicas, morte e troca de classe. `UI_PASS` valida controles, conteúdo das três classes e dez missões, transparência, animação, barras e seleção de alvo. `REALMS_PASS` valida regiões e interações acessíveis, bônus e restrições de equipamentos, capítulos em ordem, fases dos chefes, anel seguro, pilares, reforços limitados, crédito cooperativo, restauração da fonte e interpolação. `NETWORK_PASS` inicia processos ENet reais, testa movimento, mudança de classe, habilidade especial, equipamento e passagem de portal replicados e encerra apenas o servidor criado para o teste.
 

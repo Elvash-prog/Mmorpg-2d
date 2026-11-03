@@ -1,0 +1,204 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/maps/map_region.gd" id="1_qcc40"]
+[ext_resource type="Texture2D" path="res://assets/forest.png" id="2_i2djp"]
+[ext_resource type="Texture2D" path="res://assets/village.png" id="3_fpom8"]
+[ext_resource type="Script" path="res://scripts/maps/map_object.gd" id="4_pnws0"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_jrlib"]
+texture = ExtResource("3_fpom8")
+texture_region_size = Vector2i(32, 32)
+27:17/0 = 0
+13:18/0 = 0
+2:5/0 = 0
+2:5/0/custom_data_0 = true
+
+[sub_resource type="TileSet" id="TileSet_ljuuq"]
+tile_size = Vector2i(32, 32)
+custom_data_layer_0/name = "blocked"
+custom_data_layer_0/type = 1
+sources/0 = SubResource("TileSetAtlasSource_jrlib")
+
+[node name="Bosque" type="Node2D" unique_id=642727964]
+position = Vector2(1152, 0)
+script = ExtResource("1_qcc40")
+region_id = &"area.forest"
+region_index = 1
+display_name = "Bosque dos Ecos"
+subtitle = "As raízes se lembram do que os homens esqueceram"
+dimensions = Vector2(2304, 1272)
+walk_rect = Rect2(32, 64, 2240, 1152)
+theme_color = Color(0.59607846, 0.84705883, 0.68235296, 1)
+
+[node name="Background" type="Sprite2D" parent="." unique_id=1344689059]
+scale = Vector2(1.3779905, 1.3517535)
+texture = ExtResource("2_i2djp")
+centered = false
+
+[node name="Terrain" type="TileMapLayer" parent="." unique_id=1463730200]
+tile_set = SubResource("TileSet_ljuuq")
+
+[node name="Decoration" type="TileMapLayer" parent="." unique_id=1457103194]
+tile_set = SubResource("TileSet_ljuuq")
+
+[node name="CollisionTiles" type="TileMapLayer" parent="." unique_id=1102946319]
+modulate = Color(1, 1, 1, 0)
+tile_set = SubResource("TileSet_ljuuq")
+
+[node name="Foreground" type="TileMapLayer" parent="." unique_id=338974205]
+z_index = 5
+tile_set = SubResource("TileSet_ljuuq")
+
+[node name="Collision" type="Node2D" parent="." unique_id=564855838]
+
+[node name="Obstacle00" type="StaticBody2D" parent="Collision" unique_id=2015448272]
+
+[node name="Shape" type="CollisionPolygon2D" parent="Collision/Obstacle00" unique_id=924263622]
+polygon = PackedVector2Array(698, 130, 908, 130, 908, 330, 698, 330)
+
+[node name="Obstacle01" type="StaticBody2D" parent="Collision" unique_id=1092737245]
+
+[node name="Shape" type="CollisionPolygon2D" parent="Collision/Obstacle01" unique_id=185590746]
+polygon = PackedVector2Array(798, 850, 958, 850, 958, 1030, 798, 1030)
+
+[node name="Obstacle02" type="StaticBody2D" parent="Collision" unique_id=2090453066]
+
+[node name="Shape" type="CollisionPolygon2D" parent="Collision/Obstacle02" unique_id=1057387194]
+polygon = PackedVector2Array(2048, 140, 2208, 140, 2208, 310, 2048, 310)
+
+[node name="Obstacle03" type="StaticBody2D" parent="Collision" unique_id=1627301151]
+
+[node name="Shape" type="CollisionPolygon2D" parent="Collision/Obstacle03" unique_id=32109539]
+polygon = PackedVector2Array(248, 1060, 428, 1060, 428, 1200, 248, 1200)
+
+[node name="Objects" type="Node2D" parent="." unique_id=352347859]
+
+[node name="Portal1" type="Marker2D" parent="Objects" unique_id=670903237]
+position = Vector2(98, 320)
+script = ExtResource("4_pnws0")
+object_id = &"portal.1"
+kind = "portal"
+properties = {
+"area": 1,
+&"arrival_offset": Vector2(-40, 0),
+&"index": 1,
+"name": "Vale da Aurora",
+&"target_id": &"portal.0"
+}
+
+[node name="Portal2" type="Marker2D" parent="Objects" unique_id=1251879660]
+position = Vector2(2138, 1120)
+script = ExtResource("4_pnws0")
+object_id = &"portal.2"
+kind = "portal"
+properties = {
+"area": 1,
+&"arrival_offset": Vector2(50, 40),
+&"index": 2,
+"name": "Cidadela do Ocaso",
+&"target_id": &"portal.3"
+}
+
+[node name="Npc1" type="Marker2D" parent="Objects" unique_id=692822193]
+position = Vector2(288, 400)
+script = ExtResource("4_pnws0")
+object_id = &"npc.1"
+kind = "npc"
+properties = {
+"area": 1,
+&"index": 1,
+"name": "Rovan",
+"role": "Vigia dos caminhos"
+}
+
+[node name="Beacon0" type="Marker2D" parent="Objects" unique_id=174230484]
+position = Vector2(1048, 940)
+script = ExtResource("4_pnws0")
+object_id = &"beacon.0"
+kind = "beacon"
+properties = {
+"area": 1,
+&"index": 0,
+"key": "forest_beacon",
+"name": "Memória das raízes"
+}
+
+[node name="Chest1" type="Marker2D" parent="Objects" unique_id=49414363]
+position = Vector2(528, 780)
+script = ExtResource("4_pnws0")
+object_id = &"chest.1"
+definition_id = &"item.trail_boots"
+properties = {
+"area": 1,
+&"index": 1
+}
+
+[node name="Chest2" type="Marker2D" parent="Objects" unique_id=992279682]
+position = Vector2(1878, 1000)
+script = ExtResource("4_pnws0")
+object_id = &"chest.2"
+definition_id = &"item.amber_charm"
+properties = {
+"area": 1,
+&"index": 2
+}
+
+[node name="Enemy6" type="Marker2D" parent="Objects" unique_id=1247090752]
+position = Vector2(398, 620)
+script = ExtResource("4_pnws0")
+object_id = &"enemy.6"
+kind = "enemy"
+definition_id = &"enemy.slime"
+properties = {
+&"index": 6
+}
+
+[node name="Enemy7" type="Marker2D" parent="Objects" unique_id=1565025749]
+position = Vector2(588, 520)
+script = ExtResource("4_pnws0")
+object_id = &"enemy.7"
+kind = "enemy"
+definition_id = &"enemy.wolf"
+properties = {
+&"index": 7
+}
+
+[node name="Enemy8" type="Marker2D" parent="Objects" unique_id=1263075931]
+position = Vector2(1048, 550)
+script = ExtResource("4_pnws0")
+object_id = &"enemy.8"
+kind = "enemy"
+definition_id = &"enemy.wolf"
+properties = {
+&"index": 8
+}
+
+[node name="Enemy9" type="Marker2D" parent="Objects" unique_id=269611218]
+position = Vector2(1198, 880)
+script = ExtResource("4_pnws0")
+object_id = &"enemy.9"
+kind = "enemy"
+definition_id = &"enemy.slime"
+properties = {
+&"index": 9
+}
+
+[node name="Enemy10" type="Marker2D" parent="Objects" unique_id=159696722]
+position = Vector2(1498, 1060)
+script = ExtResource("4_pnws0")
+object_id = &"enemy.10"
+kind = "enemy"
+definition_id = &"enemy.wolf"
+properties = {
+&"index": 10
+}
+
+[node name="Enemy11" type="Marker2D" parent="Objects" unique_id=1209580898]
+position = Vector2(1608, 700)
+script = ExtResource("4_pnws0")
+object_id = &"enemy.11"
+kind = "enemy"
+definition_id = &"enemy.boss_forest"
+properties = {
+&"index": 11
+}

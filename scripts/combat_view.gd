@@ -1,4 +1,5 @@
 extends Node2D
+const Animator = preload("res://scripts/presentation/animation_controller.gd")
 const Realm = preload("res://scripts/realm_data.gd")
 const FOREST = preload("res://assets/forest.png")
 const RUINS = preload("res://assets/ruins.png")
@@ -15,8 +16,6 @@ func _draw() -> void:
 	if not is_instance_valid(world):
 		return
 	var local_area := _local_area()
-	var maps: Array[Texture2D] = [world.MAP_TEXTURE, FOREST, RUINS]
-	draw_texture_rect(maps[local_area], Realm.AREAS[local_area].rect, false)
 	_draw_landmarks()
 	_draw_interactables()
 	for zone in world.zones:
@@ -72,8 +71,8 @@ func _draw() -> void:
 	for fx in world.effects:
 		_draw_effect(fx)
 	if "--debug-collisions" in OS.get_cmdline_user_args():
-		for rect in world.Map.BLOCKERS + world.Map.EXTRA_BLOCKERS:
-			draw_rect(rect, Color(1, 0.15, 0.15, 0.3))
+		for polygon in world.Map.Registry.collision_polygons():
+			draw_colored_polygon(polygon,Color(1,0.15,0.15,0.3))
 
 func _draw_landmarks() -> void:
 	var pos: Vector2 = world.SPAWN
@@ -123,23 +122,11 @@ func _draw_enemy(id: int) -> void:
 		selected = true
 	if selected:
 		draw_arc(pos, 25 if enemy.kind < 2 else 34, 0, TAU, 32, Color("ffcf73"), 3)
-	var frame := int(enemy.stride / 13) % 2 if enemy.moving else 0
-	var sheet: Texture2D = ENEMIES
-	var cell := ENEMIES.get_size() / Vector2(4, 3)
-	var row: int = enemy.kind
-	var dimensions := Vector2(64,64) if enemy.kind == 0 else (Vector2(78,78) if enemy.kind == 1 else Vector2(96,96))
-	if enemy.kind >= 3:
-		sheet = BOSSES
-		cell = BOSSES.get_size() / Vector2(3,2)
-		row = enemy.kind - 3
-		frame = 1 if enemy.windup > 0.3 else (2 if enemy.windup > 0 else 0)
-		dimensions = Vector2(150,150)
-	elif enemy.windup > 0:
-		frame = 2 if enemy.windup > 0.2 else 3
-	var bob := sin(enemy.stride / 10) * 1.2 if enemy.moving else 0.0
-	var tint := Color(1.4, 1.15, 1.15) if enemy.hit > 0 else Color.WHITE
-	draw_set_transform(pos, 0, Vector2(-1 if enemy.facing.x < 0 else 1,1))
-	draw_texture_rect_region(sheet, Rect2(Vector2(-dimensions.x / 2,-dimensions.y + 14 + bob),dimensions), Rect2(Vector2(frame,row) * cell,cell),tint)
+	var pose := Animator.enemy_pose(enemy)
+	var dimensions: Vector2 = pose.size
+	var tint := Color(1.4,1.15,1.15) if enemy.hit>0 else Color.WHITE
+	draw_set_transform(pos,0,Vector2(-1 if pose.flip else 1,1))
+	draw_texture_rect_region(pose.texture,Rect2(-dimensions*pose.anchor,dimensions),pose.region,tint)
 	draw_set_transform(Vector2.ZERO)
 	if enemy.root > 0 or enemy.slow > 0:
 		draw_arc(pos, 22, 0, TAU, 6, Color("b4ebfb") if enemy.slow > 0 else Color("8bd19e"), 3)
@@ -161,21 +148,13 @@ func _draw_player(id: int) -> void:
 		draw_arc(pos - Vector2(0, 12), 34, 0, TAU, 32, Color(0.7, 0.85, 1.0, 0.75), 3)
 	if p.evade > 0:
 		draw_circle(pos, 26, Color(0.5, 1, 0.7, 0.2))
-	var animation: Dictionary = world.animations.get(id, {"row":0, "frame":0, "elapsed":0.0})
-	var walking: Array[Texture2D] = [world.HERO_SHEET,MAGE_WALK,RANGER_WALK]
-	var sheet: Texture2D = walking[p.class_id]
-	var cell := sheet.get_size() / Vector2(4,4)
-	var region := Rect2(Vector2(animation.frame,animation.row) * cell,cell)
-	if p.swing > 0:
-		sheet = ACTIONS
-		cell = ACTIONS.get_size() / Vector2(4,3)
-		var frame := clampi(int((0.48 - p.swing) / 0.12),0,3)
-		region = Rect2(Vector2(frame,p.class_id) * cell,cell)
-		draw_set_transform(pos,0,Vector2(-1 if p.facing.x < 0 else 1,1))
-		draw_texture_rect_region(sheet,Rect2(Vector2(-38,-60),Vector2(76,76)),region)
-		draw_set_transform(Vector2.ZERO)
-	else:
-		draw_texture_rect_region(sheet,Rect2(pos + Vector2(-38,-60),Vector2(76,76)),region)
+	var animation: Dictionary = world.animations.get(id,{})
+	if animation.is_empty():
+		animation = Animator.update_hero(p,{},0)
+	var pose: Dictionary = animation.pose
+	draw_set_transform(pos,0,Vector2(-1 if pose.flip else 1,1))
+	draw_texture_rect_region(pose.texture,Rect2(-pose.size*pose.anchor,pose.size),pose.region)
+	draw_set_transform(Vector2.ZERO)
 	_bar(pos + Vector2(-20, -61), 40, p.hp / p.max_hp, Color("79c7ba"))
 	_text(Data.CLASS_NAMES[p.class_id] if local else "Viajante · " + Data.CLASS_NAMES[p.class_id], pos + Vector2(-32, -68), Color("fff0ad"), 12)
 

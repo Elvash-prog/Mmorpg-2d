@@ -18,7 +18,7 @@ Folha com quatro colunas e três linhas: guerreiro, maga e patrulheira. Cada lin
 
 Folha de quatro colunas e três linhas: limo de cristais, lobo cinzento e golem de pedra com musgo. As poses representam repouso, movimento, preparação e impacto. A primeira geração apresentou resíduos no fundo; a ferramenta de imagens foi usada novamente para limpar a transparência, preservando a composição. O arquivo integrado é a versão limpa.
 
-O mapa permanece um fundo ilustrado, agora com máscaras de colisão alinhadas à casa, rio, rochas e massas de árvores. A ponte é transitável. As máscaras definidas em `scripts/map_rules.gd` são aproximações das áreas sólidas; não são recortes por pixel. Não há tiles individuais, interiores ou oclusão por camadas.
+O mapa permanece um fundo ilustrado, agora com máscaras de colisão alinhadas à casa, rio, rochas e massas de árvores. A ponte é transitável. As máscaras são aproximações das áreas sólidas, agora editáveis nos polígonos e camadas de `content/maps/*.tscn`; não são recortes por pixel. Há camadas nativas para terreno, decoração e primeiro plano, com uma paleta inicial de três recortes da nossa arte. Interiores e um TileSet completo ainda não existem.
 
 Efeitos de corte, partículas, números, projéteis, áreas de aviso, escudos e cura são desenhados pelo Godot sobre as folhas, conforme o estado autoritativo do servidor. O NPC Lia e os itens interativos ainda usam desenhos simples por código. APK e desempenho em aparelhos Android reais ainda não foram validados.
 
@@ -31,3 +31,9 @@ Efeitos de corte, partículas, números, projéteis, áreas de aviso, escudos e 
 `skill_atlas.png` tem grade 5 × 4: três linhas de ícones das cinco habilidades de cada classe e uma linha com corte, fogo, gelo, raio e cura. Esses recursos são usados na barra, nos projéteis e nos efeitos de impacto. O Godot faz recortes proporcionais em tempo de renderização, sem editar destrutivamente as imagens.
 
 Painéis e elementos interativos (baús, pilares, portais e santuários) são construídos por código. Ainda não há sprite de vestimenta individual para cada item equipado. A animação dos inimigos comuns combina poucas poses, espelhamento, deslocamento suavizado e patrulhas; ela ainda pode ser refinada.
+
+## Recursos de animação e edição
+
+Os atlas existentes agora são descritos pelos perfis de `content/animations/`: grade, quadros, duração, direção, espelhamento e ponto de apoio dos pés. A seleção entre repouso, caminhada, preparação, ataque, recuperação e morte pertence ao controlador de apresentação. O cálculo do combate continua no servidor.
+
+As ilustrações não foram recortadas destrutivamente nem substituídas por novas imagens nesta migração. Os pincéis iniciais de terreno usam regiões do atlas de nossa própria vila; os mapas continuam com a ilustração de fundo e permitem conversão gradual para tiles pelo editor.

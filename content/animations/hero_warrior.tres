@@ -1,0 +1,66 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="Script" path="res://scripts/presentation/animation_clip.gd" id="1_4us01"]
+[ext_resource type="Texture2D" path="res://assets/guardian.png" id="2_upa52"]
+[ext_resource type="Texture2D" path="res://assets/class_actions.png" id="3_xkcaq"]
+[ext_resource type="Script" path="res://scripts/presentation/animation_profile.gd" id="4_056cd"]
+
+[sub_resource type="Resource" id="Resource_edw04"]
+script = ExtResource("1_4us01")
+state = &"idle"
+texture = ExtResource("2_upa52")
+frames = PackedInt32Array(0)
+durations = PackedFloat32Array(0.12)
+
+[sub_resource type="Resource" id="Resource_4h6oo"]
+script = ExtResource("1_4us01")
+state = &"walk"
+texture = ExtResource("2_upa52")
+frames = PackedInt32Array(0, 1, 2, 3)
+durations = PackedFloat32Array(0.125, 0.125, 0.125, 0.125)
+distance_per_frame = 12.0
+
+[sub_resource type="Resource" id="Resource_6knyv"]
+script = ExtResource("1_4us01")
+state = &"dead"
+texture = ExtResource("2_upa52")
+frames = PackedInt32Array(0)
+durations = PackedFloat32Array(0.12)
+
+[sub_resource type="Resource" id="Resource_hr05o"]
+script = ExtResource("1_4us01")
+state = &"prepare"
+texture = ExtResource("3_xkcaq")
+grid = Vector2i(4, 3)
+directional = false
+frames = PackedInt32Array(1)
+durations = PackedFloat32Array(0.15)
+loop = false
+mirror_left = true
+
+[sub_resource type="Resource" id="Resource_67tyl"]
+script = ExtResource("1_4us01")
+state = &"attack"
+texture = ExtResource("3_xkcaq")
+grid = Vector2i(4, 3)
+directional = false
+frames = PackedInt32Array(2)
+durations = PackedFloat32Array(0.12)
+loop = false
+mirror_left = true
+
+[sub_resource type="Resource" id="Resource_8er2a"]
+script = ExtResource("1_4us01")
+state = &"recover"
+texture = ExtResource("3_xkcaq")
+grid = Vector2i(4, 3)
+directional = false
+frames = PackedInt32Array(3)
+durations = PackedFloat32Array(0.21)
+loop = false
+mirror_left = true
+
+[resource]
+script = ExtResource("4_056cd")
+id = &"animation.hero.warrior"
+clips = Array[Resource]([SubResource("Resource_edw04"), SubResource("Resource_4h6oo"), SubResource("Resource_6knyv"), SubResource("Resource_hr05o"), SubResource("Resource_67tyl"), SubResource("Resource_8er2a")])
